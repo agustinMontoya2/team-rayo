@@ -1,5 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import heroImage from "/assets/hero-image.webp";
 
 export function Hero() {
   const handleWhatsAppClick = () => {
@@ -11,7 +12,7 @@ export function Hero() {
     <section id="hero" className="relative min-h-screen flex items-center justify-center pt-16">
       <div className="absolute inset-0 z-0">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1636302925863-6ad504baaf3c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib3hpbmclMjB0cmFpbmluZyUyMGd5bXxlbnwxfHx8fDE3ODEwOTI0NDh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+          src={heroImage}
           alt="Boxing training"
           className="w-full h-full object-cover"
         />

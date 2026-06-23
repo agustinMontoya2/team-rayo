@@ -23,7 +23,7 @@ export function Coach() {
               Coach Daniel Portillo
             </h3>
             <p className="text-lg text-gray-300 leading-relaxed">
-              Daniel lleva más de 30 años en el mundo del boxeo.
+              Daniel lleva más de 30 años en el mundo del kick boxing.
               Con una trayectoria forjada en la disciplina y el
               trabajo duro, hoy dirige Team Rayo con un método
               que combina técnica, respeto y el ritmo justo para

@@ -22,7 +22,7 @@ export function Plans() {
             <div className="mb-6">
               <h3 className="text-3xl font-bold text-[#F2F2F2] mb-2">Plan Recreativo</h3>
               <p className="text-gray-400">
-                Ideal para quienes quieren entrenar, moverse y aprender boxeo sin presiones competitivas.
+                Ideal para quienes quieren entrenar, moverse y aprender kick boxing sin presiones competitivas.
               </p>
             </div>
 

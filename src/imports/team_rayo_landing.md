@@ -13,7 +13,7 @@
 ## 2. Hero
 
 **Título:**
-Boxeo de verdad. Entrenamiento de alto nivel.
+kick boxing de verdad. Entrenamiento de alto nivel.
 
 **Subtítulo:**
 Tanto si querés ponerte en forma como subir al ring, en Team Rayo encontrás tu lugar.
@@ -33,7 +33,7 @@ Tu entrenador
 **Nombre:** [Nombre del profe]
 
 **Texto:**
-[Nombre] lleva [X] años en el mundo del boxeo. [Trayectoria: competidor / entrenador / logros]. Hoy dirige Team Rayo con un método que combina técnica, disciplina y el ritmo justo para cada alumno, sin importar el nivel.
+[Nombre] lleva [X] años en el mundo del kick boxing. [Trayectoria: competidor / entrenador / logros]. Hoy dirige Team Rayo con un método que combina técnica, disciplina y el ritmo justo para cada alumno, sin importar el nivel.
 
 **Frase destacada:**
 "[Frase personal del profe]"
@@ -50,9 +50,10 @@ Elegí tu plan
 ### Plan Recreativo
 
 **Para quién es:**
-Ideal para quienes quieren entrenar, moverse y aprender boxeo sin presiones competitivas.
+Ideal para quienes quieren entrenar, moverse y aprender kick boxing sin presiones competitivas.
 
 **Qué incluye:**
+
 - Clases grupales de técnica y cardio
 - Acceso a todas las sesiones recreativas
 - Sin experiencia previa necesaria
@@ -69,6 +70,7 @@ Ideal para quienes quieren entrenar, moverse y aprender boxeo sin presiones comp
 Para los que quieren prepararse para pelear y llevar su nivel al máximo.
 
 **Qué incluye:**
+
 - Todo lo del plan recreativo
 - Entrenamiento específico de competencia
 - Sparring supervisado
@@ -89,7 +91,7 @@ Así entrenamos
 [Video 2 — sparring / técnica]
 [Fotos — ring, bolsas, grupos, competencias]
 
-*Nota: organizar en grilla o carrusel. Priorizar videos arriba, fotos abajo.*
+_Nota: organizar en grilla o carrusel. Priorizar videos arriba, fotos abajo._
 
 ---
 
@@ -98,14 +100,14 @@ Así entrenamos
 **Título de sección:**
 Encontrá tu horario
 
-| Día | Recreativo | Competitivo |
-|-----|-----------|-------------|
-| Lunes | [horario] | [horario] |
-| Martes | [horario] | [horario] |
-| Miércoles | [horario] | [horario] |
-| Jueves | [horario] | [horario] |
-| Viernes | [horario] | [horario] |
-| Sábado | [horario] | — |
+| Día       | Recreativo | Competitivo |
+| --------- | ---------- | ----------- |
+| Lunes     | [horario]  | [horario]   |
+| Martes    | [horario]  | [horario]   |
+| Miércoles | [horario]  | [horario]   |
+| Jueves    | [horario]  | [horario]   |
+| Viernes   | [horario]  | [horario]   |
+| Sábado    | [horario]  | —           |
 
 **Nota al pie:**
 ¿Tenés dudas sobre qué horario te queda mejor? Escribinos y te ayudamos.
@@ -131,7 +133,7 @@ Lo que dicen nuestros alumnos
 [Foto] — [Nombre], plan [Recreativo / Competitivo]
 "[Texto del testimonio]"
 
-*Nota: si tenés capturas de chats o comentarios de Instagram, también funcionan muy bien acá.*
+_Nota: si tenés capturas de chats o comentarios de Instagram, también funcionan muy bien acá._
 
 ---
 
@@ -193,4 +195,4 @@ Link directo al perfil de Instagram
 
 ---
 
-*Fin del documento — [TEXTO EN MAYÚSCULAS] = completar con dato real*
+_Fin del documento — [TEXTO EN MAYÚSCULAS] = completar con dato real_

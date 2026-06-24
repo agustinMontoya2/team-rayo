@@ -1,21 +1,25 @@
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import image1 from "/assets/gallery-image1.webp"
+import image2 from "/assets/gallery-image2.webp"
+import image3 from "/assets/gallery-image3.webp"
+import image4 from "/assets/gallery-image4.webp"
 
 export function Gallery() {
   const images = [
     {
-      url: "https://images.unsplash.com/photo-1546711076-85a7923432ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib3hpbmclMjBzcGFycmluZyUyMHJpbmd8ZW58MXx8fHwxNzgxMjE1MjY5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      url: image1,
       alt: "Sparring en el ring",
     },
     {
-      url: "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib3hpbmclMjBnbG92ZXMlMjB3b3Jrb3V0fGVufDF8fHx8MTc4MTIxNTI2OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      url: image2,
       alt: "Entrenamiento con guantes",
     },
     {
-      url: "https://images.unsplash.com/photo-1606335543042-57c525922933?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib3hpbmclMjBoZWF2eSUyMGJhZyUyMHRyYWluaW5nfGVufDF8fHx8MTc4MTIxNTI2OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      url: image3,
       alt: "Trabajo en bolsa pesada",
     },
     {
-      url: "https://images.unsplash.com/photo-1607702713064-0143212236ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhdGhsZXRlJTIwYm94aW5nJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzgxMjE1MjY5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      url: image4,
       alt: "Atleta entrenando",
     },
   ];

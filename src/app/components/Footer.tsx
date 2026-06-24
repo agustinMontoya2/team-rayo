@@ -1,5 +1,5 @@
 import { Instagram, MapPin, Phone } from "lucide-react";
-import logoImg from "../../imports/logo.jpeg";
+import logoImg from "/assets/logo.webp";
 
 export function Footer() {
   return (

@@ -1,4 +1,13 @@
-import { createContext, createElement, useContext, useReducer, type ReactNode } from 'react';
+import {
+  createContext,
+  createElement,
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+  useState,
+  type ReactNode,
+} from 'react';
 import type { RayoStore } from './domain/types';
 import { load, save } from './domain/persistence';
 import { seed } from './domain/seed';
@@ -29,23 +38,29 @@ interface StoreCtx {
   store: RayoStore;
   setStore: (s: RayoStore) => void;
   reset: () => void;
+  persistError: boolean;
+  clearPersistError: () => void;
 }
 
 const Ctx = createContext<StoreCtx | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [store, dispatch] = useReducer(reducer, undefined, load);
+  const [persistError, setPersistError] = useState(false);
 
-  const setStore = (s: RayoStore) => {
-    save(s);
+  const setStore = useCallback((s: RayoStore) => {
+    if (!save(s)) setPersistError(true);
     dispatch({ type: 'SET', store: s });
-  };
-  const reset = () => {
-    const s = seed();
-    setStore(s);
-  };
+  }, []);
 
-  return createElement(Ctx.Provider, { value: { store, setStore, reset } }, children);
+  const clearPersistError = useCallback(() => setPersistError(false), []);
+
+  const value = useMemo(
+    () => ({ store, setStore, reset: () => setStore(seed()), persistError, clearPersistError }),
+    [store, setStore, persistError, clearPersistError]
+  );
+
+  return createElement(Ctx.Provider, { value }, children);
 }
 
 export function useStore(): StoreCtx {

@@ -1,7 +1,7 @@
 import type { RayoStore } from '../domain/types';
 import { normalize, seed } from '../domain/seed';
 
-const KEY = 'team_rayo_mvp_v1';
+export const KEY = 'team_rayo_mvp_v1';
 
 export function load(): RayoStore {
   try {
@@ -12,10 +12,11 @@ export function load(): RayoStore {
   }
 }
 
-export function save(store: RayoStore): void {
+export function save(store: RayoStore): boolean {
   try {
     localStorage.setItem(KEY, JSON.stringify(store));
+    return true;
   } catch {
-    /* noop */
+    return false;
   }
 }

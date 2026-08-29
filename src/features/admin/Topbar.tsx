@@ -11,7 +11,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
   const { user, logout } = useContext(AdminContext);
   const location = useLocation();
 
-  const viewInfo = VIEW_TITLES[getCurrentView(location.pathname)];
+  const viewInfo = VIEW_TITLES[getCurrentView(location.pathname) ?? 'resumen'];
 
   return (
     <header className="h-[70px] bg-pulso-glass backdrop-blur-[14px] border-b border-pulso-line flex items-center justify-between px-6 sticky top-0 z-30">

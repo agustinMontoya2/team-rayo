@@ -1,9 +1,11 @@
-import { useState, createContext } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import { useEffect, useState, createContext } from 'react';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router';
 import { LoginScreen } from './LoginScreen';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
-import { ToastProvider } from './ui-kit';
+import { ToastProvider, useToast } from './ui-kit';
+import { useStore } from './store';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
 
 export type AdminView =
   | 'resumen'
@@ -26,11 +28,11 @@ export const VIEW_TITLES: Record<AdminView, { title: string; sub: string }> = {
   horarios: { title: 'Horarios', sub: 'Grilla que se publica en la landing' },
 };
 
-export function getCurrentView(pathname: string): AdminView {
+export function getCurrentView(pathname: string): AdminView | null {
   if (pathname === '/admin' || pathname === '/admin/') return 'resumen';
   const segment = pathname.split('/admin/')[1];
   if (segment && segment in VIEW_TITLES) return segment as AdminView;
-  return 'resumen';
+  return null;
 }
 
 interface AdminContextType {
@@ -44,6 +46,20 @@ export const AdminContext = createContext<AdminContextType>({
   user: null,
   logout: () => {},
 });
+
+function PersistErrorNotifier() {
+  const { persistError, clearPersistError } = useStore();
+  const toast = useToast();
+
+  useEffect(() => {
+    if (persistError) {
+      toast('err', 'No se pudieron guardar los cambios en este dispositivo.');
+      clearPersistError();
+    }
+  }, [persistError, toast, clearPersistError]);
+
+  return null;
+}
 
 export function AdminLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -62,39 +78,42 @@ export function AdminLayout() {
     navigate('/admin');
   };
 
-  if (!isLoggedIn) {
-    return (
-      <ToastProvider>
-        <LoginScreen onLogin={() => setIsLoggedIn(true)} />
-      </ToastProvider>
-    );
-  }
-
   return (
     <ToastProvider>
-      <AdminContext.Provider
-        value={{
-          currentView,
-          user,
-          logout,
-        }}
-      >
-        <div className="min-h-screen bg-background flex">
-          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-          {sidebarOpen && (
-            <div
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
-          <div className="flex-1 flex flex-col min-w-0 lg:ml-[260px]">
-            <Topbar onMenuClick={() => setSidebarOpen(true)} />
-            <main className="flex-1 p-6 overflow-auto">
-              <Outlet />
-            </main>
+      <PersistErrorNotifier />
+      {!isLoggedIn ? (
+        <LoginScreen onLogin={() => setIsLoggedIn(true)} />
+      ) : (
+        <AdminContext.Provider
+          value={{
+            currentView: currentView ?? 'resumen',
+            user,
+            logout,
+          }}
+        >
+          <div className="min-h-screen bg-background flex">
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+            {sidebarOpen && (
+              <div
+                className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                onClick={() => setSidebarOpen(false)}
+              />
+            )}
+            <div className="flex-1 flex flex-col min-w-0 lg:ml-[260px]">
+              <Topbar onMenuClick={() => setSidebarOpen(true)} />
+              <main className="flex-1 p-6 overflow-auto">
+                {currentView === null ? (
+                  <Navigate to="/admin" replace />
+                ) : (
+                  <ErrorBoundary>
+                    <Outlet />
+                  </ErrorBoundary>
+                )}
+              </main>
+            </div>
           </div>
-        </div>
-      </AdminContext.Provider>
+        </AdminContext.Provider>
+      )}
     </ToastProvider>
   );
 }

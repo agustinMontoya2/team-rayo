@@ -6,7 +6,7 @@ import { Users, CreditCard, Trophy, CalendarCheck, Plus, ArrowRight } from 'luci
 import { AlumnoFormModal } from './AlumnoFormModal';
 import { AbrirJornadaModal } from './modals/AbrirJornadaModal';
 import { RegistrarPagoModal } from './modals/RegistrarPagoModal';
-import { EventoFormModal } from './Eventos';
+import { EventoFormModal } from './eventos/EventoFormModal';
 
 function diaLabel(iso: string) {
   const d = new Date(iso + 'T12:00:00');

@@ -1,10 +1,11 @@
 ﻿import { useMemo, useState } from 'react';
 import { Sheet, SheetContent, SheetTitle } from '../../../components/ui/sheet';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '../../../components/ui/accordion';
-import { useStore, fullName, currentBelt, planDe, fmtDate, fmtMoney, fmtNum, fmtPeso, periodoLabel, hoy, BELT_COLORS, registrarPesoActual, registrarPesoHistorico, eliminarRegistroPeso, type Alumno } from '../store';
-import { useToast, Avatar, BeltBadge, PlanBadge, EstadoPill } from '../ui-kit';
-import { Check, Trash2 } from 'lucide-react';
+import { useStore, fullName, currentBelt, planDe, fmtDate, fmtMoney, fmtNum, periodoLabel, BELT_COLORS, type Alumno } from '../store';
+import { Avatar, BeltBadge, PlanBadge, EstadoPill } from '../ui-kit';
 import { AlumnoFormModal } from './AlumnoFormModal';
+import { PesoSection } from './alumno/PesoSection';
+import { triggerCls } from './alumno/accordionCls';
 
 interface Props {
   alumnoId: string | null;
@@ -12,17 +13,9 @@ interface Props {
   onToggle: (a: Alumno) => void;
 }
 
-const triggerCls =
-  'font-mono text-[10.5px] uppercase tracking-[.16em] text-muted-foreground hover:no-underline hover:text-white data-[state=open]:text-white px-6 py-4';
-
 export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
-  const { store, setStore } = useStore();
-  const toast = useToast();
+  const { store } = useStore();
   const [editOpen, setEditOpen] = useState(false);
-  const [pesoInput, setPesoInput] = useState('');
-  const [showPesoForm, setShowPesoForm] = useState(false);
-  const [pesoHistFecha, setPesoHistFecha] = useState(hoy());
-  const [pesoHistVal, setPesoHistVal] = useState('');
 
   const a = alumnoId ? store.alumnos.find((x) => x.id === alumnoId) : null;
 
@@ -37,7 +30,7 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
     const asisRows = jTodas.map((j) => {
       const pres = j.presentes.indexOf(a.id) > -1;
       const hr = store.horarios.find((h) => h.id === j.horarioId);
-      return { id: j.id, fecha: j.fecha, pres, hr: hr ? `${hr.dia} Â· ${hr.inicio} a ${hr.fin}` : '' };
+      return { id: j.id, fecha: j.fecha, pres, hr: hr ? `${hr.dia} · ${hr.inicio} a ${hr.fin}` : '' };
     });
     const cuotasA = store.cuotas.filter((c) => c.alumnoId === a.id).sort((x, y) => (x.periodo < y.periodo ? 1 : -1));
     const comps = store.eventos
@@ -58,45 +51,6 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
   }, [store, a]);
 
   if (!a || !perfil) return null;
-
-  const guardarPeso = () => {
-    const res = registrarPesoActual(store, a.id, pesoInput);
-    if (res.error) {
-      toast('err', res.error);
-      return;
-    }
-    setStore(res.store);
-    setPesoInput('');
-    toast('ok', `Peso de ${fullName(a)} actualizado.`);
-  };
-
-  const agregarRegistro = () => {
-    const res = registrarPesoHistorico(store, a.id, { fecha: pesoHistFecha, peso: pesoHistVal });
-    if (res.error) {
-      toast('err', res.error);
-      return;
-    }
-    setStore(res.store);
-    setPesoHistFecha(hoy());
-    setPesoHistVal('');
-    setShowPesoForm(false);
-    toast('ok', 'Registro histÃ³rico guardado.');
-  };
-
-  const delRegistro = (fecha: string) => {
-    const res = eliminarRegistroPeso(store, a.id, fecha);
-    setStore(res.store);
-    toast('ok', 'Registro eliminado.');
-  };
-
-  const pesoEvol = (a.pesos || [])
-    .slice()
-    .sort((x, y) => (x.fecha < y.fecha ? -1 : 1))
-    .map((r, i, arr) => {
-      const prev = i > 0 ? arr[i - 1].peso : null;
-      const delta = prev != null ? Math.round((r.peso - prev) * 10) / 10 : null;
-      return { ...r, delta };
-    });
 
   return (
     <>
@@ -128,11 +82,11 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
                   <dl className="grid grid-cols-[104px_minmax(0,1fr)] gap-x-3 gap-y-2 text-sm min-w-0">
                     <dt className="text-muted-foreground">DNI</dt>
                     <dd className="text-foreground break-words min-w-0">{a.dni}</dd>
-                    <dt className="text-muted-foreground">TelÃ©fono</dt>
-                    <dd className="text-foreground break-words min-w-0">{a.telefono || 'â€”'}</dd>
+                    <dt className="text-muted-foreground">Teléfono</dt>
+                    <dd className="text-foreground break-words min-w-0">{a.telefono || '—'}</dd>
                     <dt className="text-muted-foreground">Nacimiento</dt>
                     <dd className="text-foreground break-words min-w-0">
-                      {fmtDate(a.fechaNacimiento)} Â·{' '}
+                      {fmtDate(a.fechaNacimiento)} ·{' '}
                       {a.fechaNacimiento
                         ? (() => {
                             const n = new Date(a.fechaNacimiento + 'T12:00:00');
@@ -140,96 +94,25 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
                             let e = h.getFullYear() - n.getFullYear();
                             if (h < new Date(h.getFullYear(), n.getMonth(), n.getDate())) e--;
                             return e;
-                          })() + ' aÃ±os'
+                          })() + ' años'
                         : ''}
                     </dd>
                     <dt className="text-muted-foreground">Ingreso</dt>
                     <dd className="text-foreground break-words min-w-0">{fmtDate(a.fechaIngreso)}</dd>
                     <dt className="text-muted-foreground">Plan</dt>
                     <dd className="text-foreground break-words min-w-0">
-                      {perfil.p ? `${perfil.p.nombre} Â· ${fmtMoney(perfil.p.precio)}/mes` : 'Sin plan asignado'}
+                      {perfil.p ? `${perfil.p.nombre} · ${fmtMoney(perfil.p.precio)}/mes` : 'Sin plan asignado'}
                     </dd>
                   </dl>
                 </AccordionContent>
               </AccordionItem>
 
               {/* Peso */}
-              <AccordionItem value="peso" className="border-pulso-line">
-                <AccordionTrigger className={triggerCls}>Peso</AccordionTrigger>
-                <AccordionContent className="px-6">
-                  <div className="flex items-center gap-2 mb-1">
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="20"
-                      max="250"
-                      value={pesoInput}
-                      onChange={(e) => setPesoInput(e.target.value)}
-                      placeholder="Peso actual (kg)"
-                      className="w-32 px-3 py-2 bg-pulso-input border border-pulso-line rounded-xl text-foreground text-sm focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20"
-                    />
-                    <button onClick={guardarPeso} className="px-3 py-2 rounded-xl bg-pulso-indigo/15 text-pulso-indigo-soft border border-pulso-indigo/32 text-sm font-bold hover:bg-pulso-indigo/26 transition-colors inline-flex items-center gap-1.5">
-                      <Check className="w-4 h-4" /> Guardar peso
-                    </button>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-3">RegistrÃ¡ el peso despuÃ©s de cada control.</p>
-
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-[10.5px] uppercase tracking-[.12em] text-pulso-muted-text font-bold">Historial</span>
-                    <button onClick={() => setShowPesoForm((s) => !s)} className="px-3 py-1.5 rounded-lg border border-pulso-line text-xs font-semibold text-foreground hover:bg-card inline-flex items-center gap-1">
-                      <span className="text-sm leading-none">+</span> Agregar
-                    </button>
-                  </div>
-                  {showPesoForm && (
-                    <div className="flex gap-2 flex-wrap items-end mt-2">
-                      <div>
-                        <label className="block text-xs text-muted-foreground mb-1">Fecha</label>
-                        <input type="date" value={pesoHistFecha} onChange={(e) => setPesoHistFecha(e.target.value)} className="px-3 py-2 bg-pulso-input border border-pulso-line rounded-xl text-foreground text-sm" />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-muted-foreground mb-1">Peso (kg)</label>
-                        <input type="number" step="0.1" min="20" max="250" value={pesoHistVal} onChange={(e) => setPesoHistVal(e.target.value)} placeholder="Ej.: 63" className="px-3 py-2 bg-pulso-input border border-pulso-line rounded-xl text-foreground text-sm w-24" />
-                      </div>
-                      <button onClick={agregarRegistro} className="px-3 py-2 rounded-xl bg-pulso-indigo/15 text-pulso-indigo-soft border border-pulso-indigo/32 text-sm font-bold hover:bg-pulso-indigo/26 inline-flex items-center gap-1.5">
-                        <Check className="w-4 h-4" /> Guardar
-                      </button>
-                      <button onClick={() => setShowPesoForm(false)} className="px-3 py-2 rounded-xl border border-pulso-line text-sm text-foreground hover:bg-card">
-                        Cancelar
-                      </button>
-                    </div>
-                  )}
-                  {pesoEvol.length ? (
-                    <ul className="space-y-2 mt-3">
-                      {pesoEvol.map((r) => (
-                        <li key={r.fecha} className="flex items-center gap-3 py-2 border border-pulso-line-strong rounded-xl px-3">
-                          <span className="text-sm text-foreground font-semibold flex-1">
-                            {fmtPeso(r.peso)}
-                            <div className="text-xs text-muted-foreground font-normal">{fmtDate(r.fecha)}</div>
-                          </span>
-                          {r.delta == null ? (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-pulso-badge text-muted-foreground">Inicio</span>
-                          ) : r.delta > 0 ? (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-pulso-red/16 text-pulso-red">â–² +{fmtNum(r.delta)} kg</span>
-                          ) : r.delta < 0 ? (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-green-500/17 text-green-400">â–¼ {fmtNum(Math.abs(r.delta))} kg</span>
-                          ) : (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-pulso-badge text-muted-foreground">=</span>
-                          )}
-                          <button onClick={() => delRegistro(r.fecha)} className="text-muted-foreground hover:text-pulso-red transition-colors" title="Eliminar registro">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-xs text-muted-foreground mt-2">Sin registros. AgregÃ¡ entradas histÃ³ricas con el botÃ³n de arriba.</p>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
+              <PesoSection alumno={a} key={a.id} />
 
               {/* Cinturones */}
               <AccordionItem value="cinturones" className="border-pulso-line">
-                <AccordionTrigger className={triggerCls}>Cinturones Â· progreso</AccordionTrigger>
+                <AccordionTrigger className={triggerCls}>Cinturones · progreso</AccordionTrigger>
                 <AccordionContent className="px-6">
                   {perfil.grados.length ? (
                     <ul className="space-y-4 pl-1">
@@ -242,14 +125,14 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
                           <div>
                             <div className="text-sm text-foreground font-bold">{gr.cinturon}</div>
                             <div className="text-xs text-muted-foreground">
-                              Examen {fmtDate(gr.fechaExamen)} Â· {fmtNum(gr.puntuacion)}/10
+                              Examen {fmtDate(gr.fechaExamen)} · {fmtNum(gr.puntuacion)}/10
                             </div>
                           </div>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-xs text-muted-foreground">Sin graduaciones registradas. El cinturÃ³n inicial es blanco.</p>
+                    <p className="text-xs text-muted-foreground">Sin graduaciones registradas. El cinturón inicial es blanco.</p>
                   )}
                 </AccordionContent>
               </AccordionItem>
@@ -279,7 +162,7 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
                       </ul>
                     </>
                   ) : (
-                    <p className="text-xs text-muted-foreground">Sin jornadas registradas todavÃ­a.</p>
+                    <p className="text-xs text-muted-foreground">Sin jornadas registradas todavía.</p>
                   )}
                 </AccordionContent>
               </AccordionItem>
@@ -309,7 +192,7 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
 
               {/* Competencias */}
               <AccordionItem value="competencias" className="border-pulso-line">
-                <AccordionTrigger className={triggerCls}>Competencias Â· rÃ©cord {perfil.g}G-{perfil.dcount}D</AccordionTrigger>
+                <AccordionTrigger className={triggerCls}>Competencias · récord {perfil.g}G-{perfil.dcount}D</AccordionTrigger>
                 <AccordionContent className="px-6">
                   {perfil.comps.length ? (
                     <ul className="space-y-2">
@@ -318,13 +201,13 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
                           <span className="text-sm text-foreground font-semibold">{c.e.nombre}</span>
                           <span className="text-xs text-muted-foreground">
                             {fmtDate(c.e.fecha)}
-                            {c.part && c.part.pesoCompetencia != null ? ` Â· compitiÃ³ en ${fmtNum(c.part.pesoCompetencia)} kg` : ''}
+                            {c.part && c.part.pesoCompetencia != null ? ` · compitió en ${fmtNum(c.part.pesoCompetencia)} kg` : ''}
                           </span>
                           <div className="flex gap-1.5 flex-wrap">
                             {c.peleas.length ? (
                               c.peleas.map((f) => (
                                 <span key={f.id} className={`px-2.5 py-1 rounded-full text-xs font-bold ${f.resultado === 'victoria' ? 'bg-green-500/17 text-green-400' : f.resultado === 'derrota' ? 'bg-pulso-red/16 text-pulso-red' : 'bg-amber-500/16 text-amber-400'}`}>
-                                  vs {f.rival}{f.pesoRival ? ` Â· ${f.pesoRival} kg` : ''} Â· {f.resultado === 'victoria' ? 'GanÃ³' : f.resultado === 'derrota' ? 'PerdiÃ³' : 'Pendiente'}
+                                  vs {f.rival}{f.pesoRival ? ` · ${f.pesoRival} kg` : ''} · {f.resultado === 'victoria' ? 'Ganó' : f.resultado === 'derrota' ? 'Perdió' : 'Pendiente'}
                                 </span>
                               ))
                             ) : (
@@ -336,7 +219,7 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
                     </ul>
                   ) : (
                     <p className="text-xs text-muted-foreground">
-                      {perfil.p && perfil.p.tipo === 'competitivo' ? 'TodavÃ­a no participÃ³ de competencias.' : 'Participa cuando pase a un plan competitivo.'}
+                      {perfil.p && perfil.p.tipo === 'competitivo' ? 'Todavía no participó de competencias.' : 'Participa cuando pase a un plan competitivo.'}
                     </p>
                   )}
                 </AccordionContent>
@@ -349,13 +232,13 @@ export function AlumnoPerfilDrawer({ alumnoId, onClose, onToggle }: Props) {
                 onClick={() => setEditOpen(true)}
                 className="px-4 py-2.5 rounded-xl border border-pulso-line text-sm font-semibold text-foreground hover:bg-card transition-colors inline-flex items-center gap-1.5"
               >
-                âœŽ Editar datos
+                ✎ Editar datos
               </button>
               <button
                 onClick={() => onToggle(a)}
                 className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-colors inline-flex items-center gap-1.5 ${a.activo ? 'bg-pulso-red-deep text-white hover:bg-pulso-red' : 'bg-pulso-red text-primary-foreground hover:bg-foreground hover:text-background'}`}
               >
-                <span className="text-base leading-none">{a.activo ? 'â»' : 'â†º'}</span>
+                <span className="text-base leading-none">{a.activo ? '⏻' : '↺'}</span>
                 {a.activo ? 'Desactivar' : 'Reactivar'}
               </button>
             </div>

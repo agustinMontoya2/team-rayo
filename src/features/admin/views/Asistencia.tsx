@@ -1,11 +1,11 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Plus, Clock, Eye, Trash2, Check, X } from 'lucide-react';
-import { Switch } from '../../../components/ui/switch';
-import { useStore, fullName, fmtDate, ausentesDe, planDe, guardarAsistencia, eliminarJornada, type Jornada, type Alumno } from '../store';
-import { useToast, Avatar, Empty } from '../ui-kit';
-import { Modal } from '../Modal';
+import { Plus, Clock, Eye, Trash2 } from 'lucide-react';
+import { useStore, fmtDate, ausentesDe, guardarAsistencia, eliminarJornada } from '../store';
+import { useToast, Empty } from '../ui-kit';
 import { AbrirJornadaModal } from './modals/AbrirJornadaModal';
+import { AsistenciaTomarModal } from './asistencia/AsistenciaTomarModal';
+import { JornadaDetalleModal } from './asistencia/JornadaDetalleModal';
 
 export function Asistencia() {
   const { store, setStore } = useStore();
@@ -156,130 +156,3 @@ export function Asistencia() {
   );
 }
 
-function AsistenciaTomarModal({
-  jornada,
-  activos,
-  onClose,
-  onSave,
-}: {
-  jornada: Jornada | undefined;
-  activos: Alumno[];
-  onClose: () => void;
-  onSave: (id: string, presentes: string[]) => void;
-}) {
-  const { store } = useStore();
-  const [marks, setMarks] = useState<Record<string, boolean>>(
-    () =>
-      jornada
-        ? Object.fromEntries(activos.map((a) => [a.id, jornada.presentes.indexOf(a.id) > -1]))
-        : {}
-  );
-
-  if (!jornada) return null;
-  const h = jornada.horarioId ? store.horarios.find((x) => x.id === jornada.horarioId) : null;
-  const count = Object.values(marks).filter(Boolean).length;
-
-  return (
-    <Modal
-      open={!!jornada}
-      onClose={onClose}
-      title={`Asistencia Â· ${fmtDate(jornada.fecha)}`}
-      sub={h ? `${h.dia} Â· ${h.inicio} a ${h.fin}` : 'Entrenamiento libre'}
-      wide
-      footer={
-        <>
-          <span className="flex-1 text-sm text-muted-foreground">
-            {count} presentes de {activos.length}
-          </span>
-          <button onClick={onClose} className="px-4 py-2.5 rounded-xl border border-pulso-line text-sm font-semibold text-foreground hover:bg-card transition-colors">
-            Cancelar
-          </button>
-          <button
-            onClick={() => onSave(jornada.id, Object.keys(marks).filter((k) => marks[k]))}
-            className="px-4 py-2.5 rounded-xl bg-pulso-red text-primary-foreground text-sm font-bold hover:bg-foreground hover:text-background transition-colors inline-flex items-center gap-1.5"
-          >
-            <Check className="w-4 h-4" /> Guardar jornada
-          </button>
-        </>
-      }
-    >
-      <p className="text-xs text-muted-foreground mb-4">
-        MarcÃ¡ a los presentes. Quienes queden sin marcar se registran como ausentes.
-      </p>
-      <div className="space-y-1.5 max-h-[50vh] overflow-y-auto overflow-x-hidden">
-        {activos.map((a) => {
-          const p = planDe(store, a.id);
-          return (
-            <div key={a.id} className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-pulso-surface2 transition-colors">
-              <Avatar alumno={a} />
-              <div className="flex-1">
-                <div className="text-sm text-foreground font-medium">{fullName(a)}</div>
-                <div className="text-xs text-muted-foreground">{p ? p.nombre : 'sin plan'}</div>
-              </div>
-              <Switch
-                aria-label={`Marcar ${fullName(a)} como presente`}
-                checked={!!marks[a.id]}
-                onCheckedChange={(v) => setMarks((m) => ({ ...m, [a.id]: v }))}
-              />
-            </div>
-          );
-        })}
-      </div>
-    </Modal>
-  );
-}
-
-function JornadaDetalleModal({ jornada, onClose }: { jornada: Jornada | undefined; onClose: () => void }) {
-  const { store } = useStore();
-  if (!jornada) return null;
-  const pres = jornada.presentes
-    .map((id) => store.alumnos.find((a) => a.id === id))
-    .filter((a): a is Alumno => a !== undefined);
-  const aus = ausentesDe(store, jornada);
-
-  return (
-    <Modal
-      open={!!jornada}
-      onClose={onClose}
-      title="Detalle de jornada"
-      sub={fmtDate(jornada.fecha)}
-      wide
-      footer={
-        <button onClick={onClose} className="px-4 py-2.5 rounded-xl bg-pulso-red text-primary-foreground text-sm font-bold hover:bg-foreground hover:text-background transition-colors">
-          Listo
-        </button>
-      }
-    >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <h3 className="text-xs font-bold text-green-400 uppercase tracking-[.08em] mb-3">Presentes ({pres.length})</h3>
-          <ul className="space-y-2">
-            {pres.map((a) => (
-              <li key={a.id} className="flex items-center gap-2 py-1.5 px-2 rounded-lg border border-pulso-line-strong">
-                <span className="w-5 h-5 rounded-full bg-green-500/17 text-green-400 flex items-center justify-center">
-                  <Check className="w-3 h-3" />
-                </span>
-                <span className="text-sm text-foreground">{fullName(a)}</span>
-              </li>
-            ))}
-            {!pres.length && <p className="text-xs text-muted-foreground">Sin presentes.</p>}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-xs font-bold text-pulso-red uppercase tracking-[.08em] mb-3">Ausentes ({aus.length})</h3>
-          <ul className="space-y-2">
-            {aus.map((a) => (
-              <li key={a.id} className="flex items-center gap-2 py-1.5 px-2 rounded-lg border border-pulso-line-strong">
-                <span className="w-5 h-5 rounded-full bg-pulso-red/16 text-pulso-red flex items-center justify-center">
-                  <X className="w-3 h-3" />
-                </span>
-                <span className="text-sm text-foreground">{fullName(a)}</span>
-              </li>
-            ))}
-            {!aus.length && <p className="text-xs text-muted-foreground">Sin ausencias.</p>}
-          </ul>
-        </div>
-      </div>
-    </Modal>
-  );
-}

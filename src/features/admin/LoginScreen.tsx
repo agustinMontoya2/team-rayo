@@ -7,8 +7,8 @@ interface LoginScreenProps {
 }
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
-  const [usuario, setUsuario] = useState('');
-  const [contrasena, setContrasena] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [checking, setChecking] = useState(false);
 
@@ -16,12 +16,12 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     e.preventDefault();
     setChecking(true);
     setError('');
-    const ok = await verifyCredentials(usuario.trim(), contrasena);
+    const ok = verifyCredentials(username.trim(), password);
     setChecking(false);
     if (ok) {
       onLogin();
     } else {
-      setError('Usuario o contraseÃ±a incorrectos');
+      setError('Usuario o contraseña incorrectos');
     }
   };
 
@@ -32,7 +32,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         <div className="text-center mb-8">
           <img src={logoImg} alt="Logo de Team Rayo" className="w-16 h-16 mx-auto rounded-2xl mb-4 object-cover" />
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Team Rayo</h1>
-          <p className="font-mono text-pulso-red uppercase text-xs tracking-[.16em] mt-1">PANEL DEL PROFE</p>
+          <p className="font-mono text-pulso-red uppercase text-xs tracking-[.16em] mt-1">PANEL DEL PROFESOR</p>
         </div>
 
         {/* Form */}
@@ -41,19 +41,19 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             <label className="block text-sm font-medium text-muted-foreground mb-1.5">Usuario</label>
             <input
               type="text"
-              value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Tu usuario"
               className="w-full px-4 py-3 bg-background border border-pulso-line rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 transition-colors"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1.5">ContraseÃ±a</label>
+            <label className="block text-sm font-medium text-muted-foreground mb-1.5">Contraseña</label>
             <input
               type="password"
-              value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               className="w-full px-4 py-3 bg-background border border-pulso-line rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 transition-colors"
             />
           </div>
@@ -67,7 +67,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             disabled={checking}
             className="w-full bg-pulso-red text-primary-foreground font-bold py-3 rounded-xl hover:bg-foreground hover:text-background transition-colors min-h-[44px] disabled:opacity-60 disabled:hover:bg-pulso-red disabled:hover:text-primary-foreground"
           >
-            {checking ? 'Verificandoâ€¦' : 'Iniciar sesiÃ³n'}
+            {checking ? 'Verificando…' : 'Iniciar sesión'}
           </button>
         </form>
       </div>

@@ -37,7 +37,7 @@ export function getCurrentView(pathname: string): AdminView | null {
 
 interface AdminContextType {
   currentView: AdminView;
-  user: { nombre: string; apellido: string; rol: string } | null;
+  user: { firstName: string; lastName: string; role: string } | null;
   logout: () => void;
 }
 
@@ -70,7 +70,7 @@ export function AdminLayout() {
   const currentView = getCurrentView(location.pathname);
 
   const user = isLoggedIn
-    ? { nombre: 'Daniel', apellido: 'Portillo', rol: 'Profesor' }
+    ? { firstName: 'Daniel', lastName: 'Portillo', role: 'Profesor' }
     : null;
 
   const logout = () => {

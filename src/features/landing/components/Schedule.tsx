@@ -1,16 +1,8 @@
-import { Clock } from "lucide-react";
-import { useStore } from "../../admin/store";
-
-const DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+import { CalendarX2, Clock } from "lucide-react";
+import { usePublicSchedule } from "../publicData";
 
 export function Schedule() {
-  const { store } = useStore();
-  const schedule = [...store.horarios].sort((a, b) => {
-    const ia = DIAS.indexOf(a.dia);
-    const ib = DIAS.indexOf(b.dia);
-    if (ia !== ib) return ia - ib;
-    return a.inicio.localeCompare(b.inicio);
-  });
+  const schedule = usePublicSchedule();
 
   return (
     <section id="schedule" className="py-20 bg-background">
@@ -24,24 +16,36 @@ export function Schedule() {
         <p className="text-center text-muted-foreground mb-12 text-lg">Cada clase te cambia algo. Vos elegís qué.</p>
 
         <div className="max-w-2xl mx-auto bg-card rounded-2xl overflow-hidden border border-pulso-line shadow-[0_10px_28px_-18px_rgba(0,0,0,.55)]">
-          {/* Header */}
-          <div className="grid grid-cols-2 bg-pulso-red text-[#16040A] font-extrabold">
-            <div className="p-4 text-center">Día</div>
-            <div className="p-4 text-center border-l border-pulso-red-deep/30">Horario</div>
-          </div>
-
-          {/* Rows */}
-          {schedule.map((row, index) => (
-            <div
-              key={row.id}
-              className={`grid grid-cols-2 ${index !== schedule.length - 1 ? "border-b border-pulso-line" : ""} ${index % 2 === 0 ? "bg-card" : "bg-card/50"}`}
-            >
-              <div className="p-4 text-foreground font-semibold text-center">{row.dia}</div>
-              <div className="p-4 text-muted-foreground text-center border-l border-pulso-line">
-                {row.inicio} - {row.fin}
+          {schedule.length ? (
+            <>
+              {/* Header */}
+              <div className="grid grid-cols-2 bg-pulso-red text-[#16040A] font-extrabold">
+                <div className="p-4 text-center">Día</div>
+                <div className="p-4 text-center border-l border-pulso-red-deep/30">Horario</div>
               </div>
+
+              {/* Rows */}
+              {schedule.map((row, index) => (
+                <div
+                  key={row.id}
+                  className={`grid grid-cols-2 ${index !== schedule.length - 1 ? "border-b border-pulso-line" : ""} ${index % 2 === 0 ? "bg-card" : "bg-card/50"}`}
+                >
+                  <div className="p-4 text-foreground font-semibold text-center">{row.day}</div>
+                  <div className="p-4 text-muted-foreground text-center border-l border-pulso-line">
+                    {row.start} - {row.end}
+                  </div>
+                </div>
+              ))}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
+              <CalendarX2 className="w-12 h-12 text-pulso-red" />
+              <p className="text-xl font-bold text-foreground">Aún no hay horarios disponibles</p>
+              <p className="text-muted-foreground max-w-md">
+                Estamos armando la grilla de clases. Muy pronto vas a poder elegir el día y horario que mejor te quede.
+              </p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </section>

@@ -1,100 +1,100 @@
-export type TipoPlan = 'recreativo' | 'competitivo';
-export type TipoEvento = 'competencia' | 'exhibicion' | 'taller';
-export type PeleaResultado = 'pendiente' | 'victoria' | 'derrota';
+export type PlanType = 'recreativo' | 'competitivo';
+export type EventType = 'competencia' | 'exhibicion' | 'taller';
+export type FightResult = 'pendiente' | 'victoria' | 'derrota';
 
-export interface Horario {
+export interface Schedule {
   id: string;
-  dia: string;
-  inicio: string;
-  fin: string;
+  day: string;
+  start: string;
+  end: string;
 }
 
 export interface Plan {
   id: string;
-  nombre: string;
-  tipo: TipoPlan;
-  precio: number;
-  descripcion: string;
-  destacado: boolean;
-  beneficios: string[];
+  name: string;
+  type: PlanType;
+  price: number;
+  description: string;
+  featured: boolean;
+  benefits: string[];
 }
 
-export interface PesoRegistro {
-  fecha: string;
-  peso: number;
+export interface WeightEntry {
+  date: string;
+  weight: number;
 }
 
-export interface Alumno {
+export interface Student {
   id: string;
-  nombre: string;
-  apellido: string;
-  fechaNacimiento: string;
-  telefono: string;
-  dni: string;
-  fechaIngreso: string;
-  pesoActual: number | null;
-  fotoCompetencia: string | null;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  phone: string;
+  idNumber: string;
+  enrollmentDate: string;
+  currentWeight: number | null;
+  competitionPhoto: string | null;
   planId: string | null;
-  activo: boolean;
-  pesos: PesoRegistro[];
+  active: boolean;
+  weightHistory: WeightEntry[];
 }
 
-export interface Graduacion {
+export interface Graduation {
   id: string;
-  alumnoId: string;
-  cinturon: string;
-  fechaExamen: string;
-  puntuacion: number;
+  studentId: string;
+  belt: string;
+  examDate: string;
+  score: number;
 }
 
-export interface Cuota {
+export interface Fee {
   id: string;
-  alumnoId: string;
-  periodo: string;
-  monto: number;
-  fechaPago: string;
+  studentId: string;
+  period: string;
+  amount: number;
+  paymentDate: string;
 }
 
-export interface Jornada {
+export interface Session {
   id: string;
-  fecha: string;
-  horarioId: string | null;
-  presentes: string[];
+  date: string;
+  scheduleId: string | null;
+  present: string[];
 }
 
-export interface Participante {
-  alumnoId: string;
-  pesoCompetencia: number | null;
+export interface Participant {
+  studentId: string;
+  compWeight: number | null;
 }
 
-export interface Pelea {
+export interface Fight {
   id: string;
-  alumnoId: string;
-  rival: string;
-  pesoRival: number | null;
-  resultado: PeleaResultado;
+  studentId: string;
+  opponent: string;
+  opponentWeight: number | null;
+  result: FightResult;
 }
 
-export interface Evento {
+export interface Event {
   id: string;
-  nombre: string;
-  tipo: TipoEvento;
-  fecha: string;
-  descripcion: string;
-  publico: boolean;
-  participantes: Participante[];
-  peleas: Pelea[];
+  name: string;
+  type: EventType;
+  date: string;
+  description: string;
+  public: boolean;
+  participants: Participant[];
+  fights: Fight[];
 }
 
 export interface RayoStore {
   meta: { customized: boolean };
-  horarios: Horario[];
-  planes: Plan[];
-  alumnos: Alumno[];
-  graduaciones: Graduacion[];
-  cuotas: Cuota[];
-  jornadas: Jornada[];
-  eventos: Evento[];
+  schedules: Schedule[];
+  plans: Plan[];
+  students: Student[];
+  graduations: Graduation[];
+  fees: Fee[];
+  sessions: Session[];
+  events: Event[];
 }
 
 export const BELT_ORDER = ['Blanco', 'Amarillo', 'Naranja', 'Verde', 'Azul', 'Marrón', 'Negro'];

@@ -53,7 +53,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <img src={logoImg} alt="Team Rayo" className="w-10 h-10 rounded-xl object-cover" />
           <div>
             <div className="text-foreground font-extrabold tracking-tight text-sm">Team Rayo</div>
-            <div className="font-mono text-pulso-indigo uppercase text-[10px] tracking-[.16em]">PANEL DEL PROFE</div>
+            <div className="font-mono text-pulso-indigo uppercase text-[10px] tracking-[.16em]">PANEL DEL PROFESOR</div>
           </div>
         </div>
       </div>

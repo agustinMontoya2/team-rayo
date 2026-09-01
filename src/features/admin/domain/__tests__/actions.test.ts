@@ -1,252 +1,283 @@
 import { describe, expect, it } from 'vitest';
 import {
-  registrarPago,
-  eliminarPago,
-  toggleAlumnoActivo,
-  crearJornada,
-  eliminarJornada,
-  guardarAsistencia,
-  registrarGraduacion,
-  guardarAlumno,
-  crearActualizarPlan,
-  crearActualizarHorario,
-  eliminarHorario,
+  registerPayment,
+  deletePayment,
+  toggleStudentActive,
+  createSession,
+  deleteSession,
+  saveAttendance,
+  registerGraduation,
+  saveStudent,
+  createUpdatePlan,
+  createUpdateSchedule,
+  deleteSchedule,
 } from '../actions';
-import { seed } from '../seed';
-import type { RayoStore } from '../types';
+import type { RayoStore, Student } from '../types';
 
-function base(): RayoStore {
-  return seed();
-}
+import { base } from './fixtures';
 
-describe('registrarPago', () => {
+describe('registerPayment', () => {
   it('registra la cuota del alumno', () => {
     const s = base();
-    const a = s.alumnos[0];
-    const res = registrarPago(s, { alumnoId: a.id, periodo: '2026-08', monto: 25000, fechaPago: '2026-08-01' });
+    const a = s.students[0];
+    const res = registerPayment(s, { studentId: a.id, period: '2026-08', amount: 25000, paymentDate: '2026-08-01' });
     expect(res.error).toBeUndefined();
-    expect(res.store.cuotas.length).toBe(s.cuotas.length + 1);
-    expect(res.store.cuotas[res.store.cuotas.length - 1].periodo).toBe('2026-08');
+    expect(res.store.fees.length).toBe(s.fees.length + 1);
+    expect(res.store.fees[res.store.fees.length - 1].period).toBe('2026-08');
   });
 
   it('rechaza monto vacío', () => {
     const s = base();
-    const a = s.alumnos[0];
-    const res = registrarPago(s, { alumnoId: a.id, periodo: '2026-08', monto: '', fechaPago: '2026-08-01' });
+    const a = s.students[0];
+    const res = registerPayment(s, { studentId: a.id, period: '2026-08', amount: '', paymentDate: '2026-08-01' });
     expect(res.error).toContain('monto');
   });
 
   it('avisa si el período ya fue pagado por el alumno', () => {
     const s = base();
-    const a = s.alumnos[0];
-    registrarPago(s, { alumnoId: a.id, periodo: '2026-08', monto: 100, fechaPago: '2026-08-05' });
-    const s2 = { ...s, cuotas: [...s.cuotas, { id: 'c1', alumnoId: a.id, periodo: '2026-08', monto: 100, fechaPago: '2026-08-05' }] };
-    const res = registrarPago(s2, { alumnoId: a.id, periodo: '2026-08', monto: 100, fechaPago: '2026-08-05' });
+    const a = s.students[0];
+    registerPayment(s, { studentId: a.id, period: '2026-08', amount: 100, paymentDate: '2026-08-05' });
+    const s2 = { ...s, fees: [...s.fees, { id: 'c1', studentId: a.id, period: '2026-08', amount: 100, paymentDate: '2026-08-05' }] };
+    const res = registerPayment(s2, { studentId: a.id, period: '2026-08', amount: 100, paymentDate: '2026-08-05' });
     expect(res.info).toContain('ya pagó ese período');
   });
 });
 
-describe('eliminarPago', () => {
+describe('deletePayment', () => {
   it('elimina la cuota por id', () => {
     const s = base();
-    s.cuotas = [{ id: 'c1', alumnoId: 'a1', periodo: '2026-08', monto: 100, fechaPago: '2026-08-01' }];
-    const res = eliminarPago(s, 'c1');
-    expect(res.store.cuotas).toHaveLength(0);
+    s.fees = [{ id: 'c1', studentId: 'a1', period: '2026-08', amount: 100, paymentDate: '2026-08-01' }];
+    const res = deletePayment(s, 'c1');
+    expect(res.store.fees).toHaveLength(0);
   });
 });
 
-describe('toggleAlumnoActivo', () => {
+describe('toggleStudentActive', () => {
   it('invierte el estado activo y conserva el historial', () => {
     const s = base();
-    const a = s.alumnos[0];
-    const res = toggleAlumnoActivo(s, a.id);
-    expect(res.store.alumnos.find((x) => x.id === a.id)!.activo).toBe(!a.activo);
+    const a = s.students[0];
+    const res = toggleStudentActive(s, a.id);
+    expect(res.store.students.find((x) => x.id === a.id)!.active).toBe(!a.active);
   });
 
   it('devuelve error si el alumno no existe', () => {
     const s = base();
-    const res = toggleAlumnoActivo(s, 'no-existe');
+    const res = toggleStudentActive(s, 'no-existe');
     expect(res.error).toBeTruthy();
   });
 });
 
-describe('crearJornada', () => {
+describe('createSession', () => {
   it('crea la jornada con horario opcional', () => {
     const s = base();
-    const res = crearJornada(s, '2026-09-01', 'h1');
+    const res = createSession(s, '2026-09-01', 'h1');
     expect(res.error).toBeUndefined();
-    expect(res.store.jornadas.length).toBe(s.jornadas.length + 1);
-    expect(res.store.jornadas[res.store.jornadas.length - 1].horarioId).toBe('h1');
+    expect(res.store.sessions.length).toBe(s.sessions.length + 1);
+    expect(res.store.sessions[res.store.sessions.length - 1].scheduleId).toBe('h1');
   });
 
   it('rechaza fecha repetida', () => {
     const s = base();
-    s.jornadas = [{ id: 'j1', fecha: '2026-09-01', horarioId: null, presentes: [] }];
-    const res = crearJornada(s, '2026-09-01', '');
+    s.sessions = [{ id: 'j1', date: '2026-09-01', scheduleId: null, present: [] }];
+    const res = createSession(s, '2026-09-01', '');
     expect(res.error).toContain('Ya existe');
   });
 });
 
-describe('guardarAsistencia', () => {
+describe('saveAttendance', () => {
   it('guarda los presentes y calcula ausentes', () => {
     const s = base();
-    s.jornadas = [{ id: 'j1', fecha: '2026-09-01', horarioId: null, presentes: [] }];
-    const activos = s.alumnos.filter((a) => a.activo);
-    const res = guardarAsistencia(s, 'j1', [activos[0].id]);
+    s.sessions = [{ id: 'j1', date: '2026-09-01', scheduleId: null, present: [] }];
+    const activos = s.students.filter((a) => a.active);
+    const res = saveAttendance(s, 'j1', [activos[0].id]);
     expect(res.error).toBeUndefined();
-    expect(res.store.jornadas[0].presentes).toEqual([activos[0].id]);
+    expect(res.store.sessions[0].present).toEqual([activos[0].id]);
     expect(res.info).toContain('1 presentes');
   });
 
   it('devuelve error si la jornada no existe', () => {
     const s = base();
-    const res = guardarAsistencia(s, 'no-existe', []);
+    const res = saveAttendance(s, 'no-existe', []);
     expect(res.error).toBeTruthy();
   });
-});
 
-describe('eliminarJornada', () => {
-  it('elimina la jornada por id', () => {
+  it('no cuenta a los alumnos que aún no habían ingresado como ausentes', () => {
     const s = base();
-    s.jornadas = [{ id: 'j1', fecha: '2026-09-01', horarioId: null, presentes: [] }];
-    const res = eliminarJornada(s, 'j1');
-    expect(res.store.jornadas).toHaveLength(0);
+    const antiguo = s.students.find((a) => a.active)!;
+    const nuevo: Student = { ...antiguo, id: 'nuevo', idNumber: '00000001', enrollmentDate: '2026-09-01' };
+    s.students = [...s.students, nuevo];
+    s.sessions = [{ id: 'j1', date: '2026-08-28', scheduleId: null, present: [] }];
+    const res = saveAttendance(s, 'j1', []);
+    expect(res.error).toBeUndefined();
+    expect(res.info).not.toContain('nuevo');
   });
 });
 
-describe('registrarGraduacion', () => {
+describe('deleteSession', () => {
+  it('elimina la jornada por id', () => {
+    const s = base();
+    s.sessions = [{ id: 'j1', date: '2026-09-01', scheduleId: null, present: [] }];
+    const res = deleteSession(s, 'j1');
+    expect(res.store.sessions).toHaveLength(0);
+  });
+});
+
+describe('registerGraduation', () => {
   it('registra la graduación si es válida', () => {
     const s = base();
-    const a = s.alumnos[0];
-    const res = registrarGraduacion(s, { alumnoId: a.id, cinturon: 'Azul', fechaExamen: '2026-08-20', puntuacion: 8.5 });
+    const a = s.students[0];
+    const res = registerGraduation(s, { studentId: a.id, belt: 'Azul', examDate: '2026-08-20', score: 8.5 });
     expect(res.error).toBeUndefined();
-    expect(res.store.graduaciones.length).toBe(s.graduaciones.length + 1);
-    expect(res.store.graduaciones[res.store.graduaciones.length - 1].cinturon).toBe('Azul');
+    expect(res.store.graduations.length).toBe(s.graduations.length + 1);
+    expect(res.store.graduations[res.store.graduations.length - 1].belt).toBe('Azul');
   });
 
   it('rechaza fecha futura y puntuación fuera de rango', () => {
     const s = base();
-    const a = s.alumnos[0];
-    const futura = registrarGraduacion(s, { alumnoId: a.id, cinturon: 'Azul', fechaExamen: '2099-01-01', puntuacion: 8 });
+    const a = s.students[0];
+    const futura = registerGraduation(s, { studentId: a.id, belt: 'Azul', examDate: '2099-01-01', score: 8 });
     expect(futura.error).toContain('futura');
-    const fuera = registrarGraduacion(s, { alumnoId: a.id, cinturon: 'Azul', fechaExamen: '2026-08-20', puntuacion: 11 });
+    const fuera = registerGraduation(s, { studentId: a.id, belt: 'Azul', examDate: '2026-08-20', score: 11 });
     expect(fuera.error).toContain('Puntuación');
   });
 });
 
-describe('guardarAlumno', () => {
+describe('saveStudent', () => {
   it('registra un alumno nuevo activo', () => {
     const s = base();
-    const res = guardarAlumno(s, {
-      nombre: 'Lucas',
-      apellido: 'Méndez',
-      dni: '12345678',
-      fechaNacimiento: '2000-01-01',
-      telefono: '',
-      fechaIngreso: '2026-08-20',
+    const res = saveStudent(s, {
+      firstName: 'Lucas',
+      lastName: 'Méndez',
+      idNumber: '12345678',
+      birthDate: '2000-01-01',
+      phone: '',
+      enrollmentDate: '2026-08-20',
       planId: null,
-      pesoActual: null,
-      fotoCompetencia: null,
+      currentWeight: null,
+      competitionPhoto: null,
     });
-    expect(res.result.error).toBeUndefined();
-    expect(res.result.store.alumnos.length).toBe(s.alumnos.length + 1);
-    expect(res.exists?.activo).toBe(true);
+    expect(res.error).toBeUndefined();
+    expect(res.store.students.length).toBe(s.students.length + 1);
+    expect(res.store.students[res.store.students.length - 1].active).toBe(true);
   });
 
   it('rechaza DNI repetido para un alumno distinto', () => {
     const s = base();
-    const a = s.alumnos[0];
-    const res = guardarAlumno(s, {
-      nombre: 'Lucas',
-      apellido: 'Méndez',
-      dni: a.dni,
-      fechaNacimiento: '2000-01-01',
-      telefono: '',
-      fechaIngreso: '2026-08-20',
+    const a = s.students[0];
+    const res = saveStudent(s, {
+      firstName: 'Lucas',
+      lastName: 'Méndez',
+      idNumber: a.idNumber,
+      birthDate: '2000-01-01',
+      phone: '',
+      enrollmentDate: '2026-08-20',
       planId: null,
-      pesoActual: null,
-      fotoCompetencia: null,
+      currentWeight: null,
+      competitionPhoto: null,
     });
-    expect(res.result.error).toBeTruthy();
-    expect(res.result.fieldErrors).toHaveProperty('dni');
+    expect(res.error).toBeTruthy();
+    expect(res.fieldErrors).toHaveProperty('idNumber');
   });
 
   it('actualiza los datos de un alumno existente', () => {
     const s = base();
-    const a = s.alumnos[0];
-    const res = guardarAlumno(s, {
+    const a = s.students[0];
+    const res = saveStudent(s, {
       id: a.id,
-      nombre: 'Cambiado',
-      apellido: a.apellido,
-      dni: a.dni,
-      fechaNacimiento: a.fechaNacimiento,
-      telefono: a.telefono,
-      fechaIngreso: a.fechaIngreso,
+      firstName: 'Cambiado',
+      lastName: a.lastName,
+      idNumber: a.idNumber,
+      birthDate: a.birthDate,
+      phone: a.phone,
+      enrollmentDate: a.enrollmentDate,
       planId: a.planId,
-      pesoActual: a.pesoActual,
-      fotoCompetencia: a.fotoCompetencia || null,
+      currentWeight: a.currentWeight,
+      competitionPhoto: a.competitionPhoto || null,
     });
-    expect(res.result.error).toBeUndefined();
-    expect(res.result.store.alumnos.find((x) => x.id === a.id)!.nombre).toBe('Cambiado');
+    expect(res.error).toBeUndefined();
+    expect(res.store.students.find((x) => x.id === a.id)!.firstName).toBe('Cambiado');
+  });
+
+  it('actualiza el plan al editar un alumno existente', () => {
+    const s = base();
+    s.plans = [
+      { id: 'p1', name: 'Plan Recreativo', type: 'recreativo', price: 18000, description: '', featured: false, benefits: [] },
+      { id: 'p2', name: 'Plan Competitivo', type: 'competitivo', price: 25000, description: '', featured: false, benefits: [] },
+    ];
+    const a = s.students[0];
+    const res = saveStudent(s, {
+      id: a.id,
+      firstName: a.firstName,
+      lastName: a.lastName,
+      idNumber: a.idNumber,
+      birthDate: a.birthDate,
+      phone: a.phone,
+      enrollmentDate: a.enrollmentDate,
+      planId: 'p2',
+      currentWeight: a.currentWeight,
+      competitionPhoto: a.competitionPhoto,
+    });
+    expect(res.error).toBeUndefined();
+    expect(res.store.students.find((x) => x.id === a.id)!.planId).toBe('p2');
   });
 });
 
-describe('plan / horario actions', () => {
+describe('plan / schedule actions', () => {
   it('crea y actualiza un plan', () => {
     const s = base();
-    const creado = crearActualizarPlan(s, {
+    const creado = createUpdatePlan(s, {
       id: 'p-nuevo',
-      nombre: 'Competitivo Pro',
-      tipo: 'competitivo',
-      precio: 40000,
-      descripcion: 'Entrenamiento competitivo',
-      destacado: true,
-      beneficios: ['Dos competencias por año'],
+      name: 'Competitivo Pro',
+      type: 'competitivo',
+      price: 40000,
+      description: 'Entrenamiento competitivo',
+      featured: true,
+      benefits: ['Dos competencias por año'],
     });
     expect(creado.error).toBeUndefined();
-    expect(creado.store.planes.some((p) => p.id === 'p-nuevo')).toBe(true);
-    const actualizado = crearActualizarPlan(creado.store, {
-      ...creado.store.planes.find((p) => p.id === 'p-nuevo')!,
-      precio: 45000,
+    expect(creado.store.plans.some((p) => p.id === 'p-nuevo')).toBe(true);
+    const actualizado = createUpdatePlan(creado.store, {
+      ...creado.store.plans.find((p) => p.id === 'p-nuevo')!,
+      price: 45000,
     });
-    expect(actualizado.store.planes.find((p) => p.id === 'p-nuevo')!.precio).toBe(45000);
+    expect(actualizado.store.plans.find((p) => p.id === 'p-nuevo')!.price).toBe(45000);
   });
 
   it('rechaza un plan sin nombre o con precio inválido', () => {
     const s = base();
-    const sinNombre = crearActualizarPlan(s, {
+    const sinNombre = createUpdatePlan(s, {
       id: 'p-x',
-      nombre: ' ',
-      tipo: 'competitivo',
-      precio: 40000,
-      descripcion: '',
-      destacado: false,
-      beneficios: [],
+      name: ' ',
+      type: 'competitivo',
+      price: 40000,
+      description: '',
+      featured: false,
+      benefits: [],
     });
     expect(sinNombre.error).toBeTruthy();
-    const sinPrecio = crearActualizarPlan(s, {
+    const sinPrecio = createUpdatePlan(s, {
       id: 'p-x',
-      nombre: 'Plan',
-      tipo: 'competitivo',
-      precio: 0,
-      descripcion: '',
-      destacado: false,
-      beneficios: [],
+      name: 'Plan',
+      type: 'competitivo',
+      price: 0,
+      description: '',
+      featured: false,
+      benefits: [],
     });
     expect(sinPrecio.error).toBeTruthy();
   });
 
   it('crea y elimina un horario, y desvincula jornadas al eliminarlo', () => {
     const s = base();
-    const creado = crearActualizarHorario(s, { dia: 'Domingo', inicio: '19:00', fin: '21:00' });
+    const creado = createUpdateSchedule(s, { day: 'Domingo', start: '19:00', end: '21:00' });
     expect(creado.error).toBeUndefined();
-    const h = creado.store.horarios.find((x) => x.dia === 'Domingo')!;
+    const h = creado.store.schedules.find((x) => x.day === 'Domingo')!;
     const conJornada: RayoStore = {
       ...creado.store,
-      jornadas: [...creado.store.jornadas, { id: 'j-test', fecha: '2026-09-02', horarioId: h.id, presentes: [] }],
+      sessions: [...creado.store.sessions, { id: 'j-test', date: '2026-09-02', scheduleId: h.id, present: [] }],
     };
-    const borrado = eliminarHorario(conJornada, h.id);
-    expect(borrado.store.horarios.some((x) => x.id === h.id)).toBe(false);
-    expect(borrado.store.jornadas.find((j) => j.id === 'j-test')!.horarioId).toBeNull();
+    const borrado = deleteSchedule(conJornada, h.id);
+    expect(borrado.store.schedules.some((x) => x.id === h.id)).toBe(false);
+    expect(borrado.store.sessions.find((j) => j.id === 'j-test')!.scheduleId).toBeNull();
   });
 });

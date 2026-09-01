@@ -17,7 +17,9 @@ export * from './domain/types';
 export * from './domain/helpers';
 export * from './domain/format';
 export * from './domain/seed';
+export * from './domain/utils';
 export * from './domain/actions';
+export * from './domain/catalog';
 
 export type Action =
   | { type: 'SET'; store: RayoStore }

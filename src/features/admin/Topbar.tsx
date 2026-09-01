@@ -33,9 +33,9 @@ export function Topbar({ onMenuClick }: TopbarProps) {
         {user && (
           <div className="hidden sm:flex items-center gap-2 bg-surface px-3 py-2 rounded-xl">
             <span className="w-8 h-8 rounded-[10px] bg-pulso-indigo/20 text-pulso-indigo-soft font-extrabold text-xs flex items-center justify-center">
-              {user.nombre[0]}{user.apellido[0]}
+              {user.firstName[0]}{user.lastName[0]}
             </span>
-            <span className="text-sm text-foreground font-medium">{user.nombre} {user.apellido} · {user.rol}</span>
+            <span className="text-sm text-foreground font-medium">{user.firstName} {user.lastName} · {user.role}</span>
           </div>
         )}
         <button

@@ -1,4 +1,5 @@
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { SectionHeading } from "./SectionHeading";
 import image1 from "/assets/gallery-image1.webp"
 import image2 from "/assets/gallery-image2.webp"
 import image3 from "/assets/gallery-image3.webp"
@@ -27,9 +28,9 @@ export function Gallery() {
   return (
     <section id="gallery" className="py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-center text-foreground mb-4 tracking-tight">
+        <SectionHeading>
           Así <span className="text-pulso-red">entrenamos</span>
-        </h2>
+        </SectionHeading>
         <p className="font-mono text-pulso-red uppercase text-xs tracking-[.16em] text-center mb-16">GALERÍA</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

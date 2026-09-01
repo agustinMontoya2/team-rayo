@@ -1,5 +1,8 @@
 import { Instagram, MapPin, Phone } from "lucide-react";
 import logoImg from "/assets/logo.webp";
+import { scrollToSection } from "../links";
+import { ADDRESS_STREET, ADDRESS_NEIGHBORHOOD, VENUE, INSTAGRAM_URL, INSTAGRAM_HANDLE, WHATSAPP_DISPLAY } from "../constants";
+import { whatsappUrl } from "../links";
 
 export function Footer() {
   return (
@@ -33,27 +36,27 @@ export function Footer() {
               <div className="flex items-start gap-3 text-muted-foreground">
                 <MapPin className="w-5 h-5 text-pulso-red flex-shrink-0 mt-0.5" />
                 <span>
-                  Las Heras 1000 (arriba de Sociedad de Fomento)
+                  {ADDRESS_STREET} · {ADDRESS_NEIGHBORHOOD} ({VENUE})
                 </span>
               </div>
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-5 h-5 text-pulso-red flex-shrink-0" />
                 <a
-                  href="https://wa.me/5491157234518"
+                  href={whatsappUrl()}
                   className="hover:text-pulso-red transition-colors"
                 >
-                  +54 9 11 5723-4518
+                  {WHATSAPP_DISPLAY}
                 </a>
               </div>
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Instagram className="w-5 h-5 text-pulso-red flex-shrink-0" />
                 <a
-                  href="https://instagram.com/teamrayo31"
+                  href={INSTAGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-pulso-red transition-colors"
                 >
-                  @teamrayo31
+                  @{INSTAGRAM_HANDLE}
                 </a>
               </div>
             </div>
@@ -73,11 +76,7 @@ export function Footer() {
               ].map(({ label, id }) => (
                 <button
                   key={id}
-                  onClick={() =>
-                    document
-                      .getElementById(id)
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
+                  onClick={() => scrollToSection(id)}
                   className="block text-muted-foreground hover:text-pulso-red transition-colors"
                 >
                   {label}

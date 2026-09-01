@@ -1,5 +1,6 @@
 import type { RayoStore } from '../domain/types';
-import { normalize, seed } from '../domain/seed';
+import { seed } from '../domain/seed';
+import { normalize } from '../domain/utils';
 
 export const KEY = 'team_rayo_mvp_v1';
 

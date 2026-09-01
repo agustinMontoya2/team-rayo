@@ -1,4 +1,4 @@
-﻿import {
+import {
   createContext,
   useCallback,
   useContext,
@@ -9,39 +9,43 @@
 import { Check, AlertTriangle, Info } from 'lucide-react';
 import {
   BELT_COLORS,
+  PLAN_TYPES,
   fullName,
-  type Alumno,
+  type Student,
 } from './store';
+import { cardSurface } from './classes';
+
+export { eventTypeLabel } from './domain/catalog';
 
 const AV_COLORS = ['#22288A', '#6d28d9', '#9a3412', '#155e75', '#166534'];
 
-export function avColor(nombre: string) {
+export function avColor(name: string) {
   let s = 0;
-  for (let i = 0; i < nombre.length; i++) s += nombre.charCodeAt(i);
+  for (let i = 0; i < name.length; i++) s += name.charCodeAt(i);
   return AV_COLORS[s % AV_COLORS.length];
 }
 
-export function avatarText(nombre: string) {
-  const w = String(nombre || '').trim().split(/\s+/).filter((x) => x.length > 1);
+export function avatarText(name: string) {
+  const w = String(name || '').trim().split(/\s+/).filter((x) => x.length > 1);
   return ((w[0] || '?')[0] + (w[1] ? w[1][0] : '')).toUpperCase();
 }
 
-export function Avatar({ alumno, size }: { alumno?: Alumno | null; size?: 'sm' | 'md' | 'lg' }) {
+export function Avatar({ student, size }: { student?: Student | null; size?: 'sm' | 'md' | 'lg' }) {
   const cls =
     size === 'lg' ? 'w-16 h-16 text-lg' : size === 'md' ? 'w-10 h-10 text-xs' : 'w-9 h-9 text-xs';
-  if (alumno && alumno.fotoCompetencia) {
+  if (student && student.competitionPhoto) {
     return (
       <span className={`${cls} rounded-[10px] overflow-hidden flex-shrink-0`}>
-        <img src={alumno.fotoCompetencia} alt={fullName(alumno)} className="w-full h-full object-cover" />
+        <img src={student.competitionPhoto} alt={fullName(student)} className="w-full h-full object-cover" />
       </span>
     );
   }
   return (
     <span
       className={`${cls} rounded-[10px] font-extrabold flex items-center justify-center text-white flex-shrink-0`}
-      style={{ background: avColor(fullName(alumno)) }}
+      style={{ background: avColor(fullName(student)) }}
     >
-      {avatarText(fullName(alumno))}
+      {avatarText(fullName(student))}
     </span>
   );
 }
@@ -51,40 +55,39 @@ export function BeltBadge({ belt }: { belt: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-pulso-badge text-muted-foreground">
       <span className="w-2 h-2 rounded-full" style={{ background: color }} />
-      {belt || 'Sin graduaciÃ³n'}
+      {belt || 'Sin graduación'}
     </span>
   );
 }
 
-export function PlanBadge({ tipo }: { tipo?: string }) {
-  const comp = tipo === 'competitivo';
+export function PlanBadge({ type }: { type?: string }) {
   return (
     <span
       className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
-        comp ? 'bg-pulso-red/16 text-pulso-red' : 'bg-pulso-indigo/17 text-pulso-indigo-soft'
+        type === 'competitivo' ? 'bg-pulso-red/16 text-pulso-red' : 'bg-pulso-indigo/17 text-pulso-indigo-soft'
       }`}
     >
-      {comp ? 'Competitivo' : 'Recreativo'}
+      {type ? PLAN_TYPES[type as keyof typeof PLAN_TYPES]?.label ?? 'Recreativo' : 'Recreativo'}
     </span>
   );
 }
 
-export function EstadoPill({ activo }: { activo: boolean }) {
+export function StatusPill({ active }: { active: boolean }) {
   return (
     <span
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
-        activo ? 'bg-green-500/17 text-green-400' : 'bg-pulso-red/16 text-pulso-red'
+        active ? 'bg-green-500/17 text-green-400' : 'bg-pulso-red/16 text-pulso-red'
       }`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${activo ? 'bg-green-400' : 'bg-pulso-red'}`} />
-      {activo ? 'Activo' : 'Inactivo'}
+      <span className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-green-400' : 'bg-pulso-red'}`} />
+      {active ? 'Activo' : 'Inactivo'}
     </span>
   );
 }
 
 export function Empty({ msg }: { msg: string }) {
   return (
-    <div className="bg-card rounded-2xl border border-pulso-line p-10 flex flex-col items-center justify-center text-center gap-2">
+    <div className={`${cardSurface} p-10 flex flex-col items-center justify-center text-center gap-2`}>
       <Info className="w-6 h-6 text-pulso-border" />
       <p className="text-sm text-muted-foreground">{msg}</p>
     </div>
@@ -139,8 +142,4 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 export function useToast() {
   return useContext(ToastCtx);
-}
-
-export function tipoEventoLabel(t: string) {
-  return { competencia: 'Competencia', exhibicion: 'ExhibiciÃ³n', taller: 'Taller' }[t] || t;
 }

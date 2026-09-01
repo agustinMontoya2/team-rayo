@@ -55,7 +55,7 @@ describe('persistence', () => {
     stubStorage();
     localStorage.getItem = vi.fn(() => JSON.stringify(s));
     const loaded = load();
-    expect(loaded.alumnos).toHaveLength(s.alumnos.length);
+    expect(loaded.students).toHaveLength(s.students.length);
     expect(loaded.meta.customized).toBe(false);
   });
 });

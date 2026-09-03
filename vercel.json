@@ -1,0 +1,11 @@
+{
+  "buildCommand": "pnpm build",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/robots.txt", "destination": "/robots.txt" },
+    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

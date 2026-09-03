@@ -98,6 +98,7 @@ export function Fees() {
             {!verTodos && (
               <input
                 type="month"
+                aria-label="Período"
                 value={period}
                 onChange={(e) => setPeriod(e.target.value || currentPeriod())}
                 className="px-4 py-2 bg-pulso-input border border-pulso-line rounded-xl text-foreground focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 text-sm"
@@ -157,7 +158,7 @@ export function Fees() {
 
       {/* Registrar pago (shared modal) */}
       <RegisterPaymentModal
-        key={pagoOpen ? `pago-${payStudentId}-${payPeriod}` : 'cerrado'}
+        key={pagoOpen ? `pago-${payStudentId}-${payPeriod}` : 'register-payment-cerrado'}
         open={pagoOpen}
         onClose={() => setPagoOpen(false)}
         defaultPeriod={payPeriod || period}
@@ -167,7 +168,7 @@ export function Fees() {
 
       {/* Editar / Nuevo plan */}
       <PlanModal
-        key={editPlan ? editPlan.id : 'cerrado'}
+        key={editPlan ? editPlan.id : 'plan-cerrado'}
         plan={editPlan}
         onClose={() => setEditPlan(null)}
         onSave={guardarPlan}

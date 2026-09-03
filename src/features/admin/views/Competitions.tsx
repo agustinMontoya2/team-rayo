@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Swords, Trophy, ThumbsDown, MinusCircle } from 'lucide-react';
-import { useStore, fullName, currentBelt, formatDate, formatWeight, fightResultBadge, fightResultLabel, fightResultHeader, fightRecord, competitionHistory } from '../store';
+import { useStore, fullName, currentBelt, formatDate, formatWeight, fightResultBadge, fightResultLabel, fightResultHeader, fightRecord, competitionHistory, FIGHT_RESULTS } from '../store';
 import { Avatar, BeltBadge, Empty } from '../ui-kit';
+import { Field } from '../Field';
 import { selectCls, cardSurface } from '../classes';
 
 export function Competitions() {
@@ -25,36 +26,37 @@ export function Competitions() {
       <div className={`${cardSurface} p-6`}>
         <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex-1 min-w-[240px]">
-            <label className="block text-sm font-medium text-foreground mb-1.5">Competidor</label>
-            <select className={selectCls} value={sel} onChange={(e) => setSel(e.target.value)}>
-              {store.students.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {fullName(a)}
-                  {a.active ? '' : ' (inactivo)'}
-                </option>
-              ))}
-            </select>
+            <Field label="Competidor">
+              <select className={selectCls} value={sel} onChange={(e) => setSel(e.target.value)}>
+                {store.students.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {fullName(a)}
+                    {a.active ? '' : ' (inactivo)'}
+                  </option>
+                ))}
+              </select>
+            </Field>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <Trophy className="w-9 h-9" />
               <div>
                 <div className="text-2xl font-extrabold leading-none text-green-400">{String(record.wins).padStart(2, '0')}</div>
-                <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[.12em]">{fightResultHeader('victoria')}</div>
+                <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[.12em]">{fightResultHeader(FIGHT_RESULTS.victoria.value)}</div>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <ThumbsDown className="w-9 h-9 text-pulso-red" />
               <div>
                 <div className="text-2xl font-extrabold leading-none text-pulso-red">{String(record.losses).padStart(2, '0')}</div>
-                <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[.12em]">{fightResultHeader('derrota')}</div>
+                <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[.12em]">{fightResultHeader(FIGHT_RESULTS.derrota.value)}</div>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <MinusCircle className="w-9 h-9 text-muted-foreground" />
               <div>
                 <div className="text-2xl font-extrabold leading-none text-foreground">{String(record.pending).padStart(2, '0')}</div>
-                <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[.12em]">{fightResultHeader('pendiente')}</div>
+                <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[.12em]">{fightResultHeader(FIGHT_RESULTS.pendiente.value)}</div>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { useStore, fullName, formatDate, formatWeight, fightResultBadge, fightResultShort, addFight, setFightResult, removeFight, type Event, type FightResult } from '../../store';
+import { useStore, fullName, formatDate, formatWeight, fightResultBadge, fightResultShort, addFight, setFightResult, removeFight, FIGHT_RESULTS, type Event, type FightResult } from '../../store';
 import { validateFightFields } from '../../domain/validators';
 import { useRealtimeValidation } from '../../hooks/useRealtimeValidation';
 import { useToast, Avatar } from '../../ui-kit';
@@ -71,7 +71,7 @@ export function FightsModal({ event, onClose }: { event: Event | undefined; onCl
         }
       >
       <div className="flex flex-col sm:flex-row gap-2 mb-4 flex-wrap">
-        <select className={selectCls + ' flex-1 min-w-0'} value={values.studentId} onChange={(e) => onChange('studentId', e.target.value)} onBlur={() => onBlur('studentId')}>
+        <select className={selectCls + ' flex-1 min-w-0'} aria-label="Participante" value={values.studentId} onChange={(e) => onChange('studentId', e.target.value)} onBlur={() => onBlur('studentId')}>
           {event.participants.length ? (
             event.participants.map((p) => {
               const a = store.students.find((x) => x.id === p.studentId);
@@ -86,10 +86,11 @@ export function FightsModal({ event, onClose }: { event: Event | undefined; onCl
           )}
         </select>
         <div className="flex gap-2 flex-1 min-w-0">
-          <input className={inputCls + ' flex-1 min-w-0'} placeholder="Rival" value={values.opponent} onChange={(e) => onChange('opponent', e.target.value)} onBlur={() => onBlur('opponent')} />
+          <input className={inputCls + ' flex-1 min-w-0'} aria-label="Rival" placeholder="Rival" value={values.opponent} onChange={(e) => onChange('opponent', e.target.value)} onBlur={() => onBlur('opponent')} />
           <input
             className="w-[92px] shrink-0 px-4 py-3 bg-pulso-input border border-pulso-line rounded-xl text-foreground focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 transition-colors text-sm"
             placeholder="Kg (opc.)"
+            aria-label="Peso del rival (kg)"
             type="number"
             value={values.opponentWeight}
             onChange={(e) => onChange('opponentWeight', e.target.value)}
@@ -115,7 +116,7 @@ export function FightsModal({ event, onClose }: { event: Event | undefined; onCl
                   <div className="text-xs text-muted-foreground">vs {f.opponent}{f.opponentWeight != null ? ` · ${formatWeight(f.opponentWeight)}` : ''}</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  {(['pendiente', 'victoria', 'derrota'] as FightResult[]).map((r) => (
+                  {(Object.keys(FIGHT_RESULTS) as FightResult[]).map((r) => (
                     <button
                       key={r}
                       onClick={() => setResultado(f.id, r)}

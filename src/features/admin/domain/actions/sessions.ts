@@ -1,6 +1,7 @@
 import type { RayoStore, Graduation, Session } from '../types';
 import { uid } from '../utils';
 import { studentsInSession } from '../helpers';
+import type { BeltType } from '../catalog';
 import { validateSessionDate, validateGraduationFields } from '../validators';
 import { MSG } from '../messages';
 import { err, ok, type ActionResult } from './common';
@@ -27,7 +28,7 @@ export function deleteSession(d: RayoStore, sessionId: string): ActionResult {
 
 export function registerGraduation(
   d: RayoStore,
-  input: { studentId: string; belt: string; examDate: string; score: number | string }
+  input: { studentId: string; belt: BeltType; examDate: string; score: number | string }
 ): ActionResult {
   const pts = Number(input.score);
   const fieldErrors = validateGraduationFields({ examDate: input.examDate, score: input.score });

@@ -39,7 +39,7 @@ export function CompetitionsSection({ comps, p, g, dcount }: Props) {
           </ul>
         ) : (
           <p className="text-xs text-muted-foreground">
-            {p && p.type === 'competitivo' ? 'Todavía no participó de competencias.' : `Participa cuando pase a un plan ${PLAN_TYPES.competitivo.label.toLowerCase()}.`}
+            {p && p.type === PLAN_TYPES.competitivo.value ? 'Todavía no participó de competencias.' : `Participa cuando pase a un plan ${PLAN_TYPES.competitivo.label.toLowerCase()}.`}
           </p>
         )}
       </AccordionContent>

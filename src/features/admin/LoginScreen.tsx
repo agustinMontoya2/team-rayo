@@ -1,6 +1,7 @@
 ﻿import { useState } from 'react';
 import logoImg from '/assets/logo.webp';
 import { verifyCredentials } from './auth';
+import { Field } from './Field';
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -37,8 +38,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1.5">Usuario</label>
+          <Field label="Usuario" labelClassName="block text-sm font-medium text-muted-foreground mb-1.5">
             <input
               type="text"
               value={username}
@@ -46,9 +46,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               placeholder="Tu usuario"
               className="w-full px-4 py-3 bg-background border border-pulso-line rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 transition-colors"
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1.5">Contraseña</label>
+          </Field>
+          <Field label="Contraseña" labelClassName="block text-sm font-medium text-muted-foreground mb-1.5">
             <input
               type="password"
               value={password}
@@ -56,7 +55,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               placeholder="••••••••"
               className="w-full px-4 py-3 bg-background border border-pulso-line rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 transition-colors"
             />
-          </div>
+          </Field>
 
           {error && (
             <p className="text-pulso-red text-sm font-medium" role="alert">{error}</p>

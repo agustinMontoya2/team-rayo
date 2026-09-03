@@ -14,6 +14,12 @@ export function openInstagram() {
   window.open(INSTAGRAM_URL, '_blank');
 }
 
-export function scrollToSection(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+export function scrollToSection(id: string): boolean {
+  const el = document.getElementById(id);
+  if (!el) {
+    if (import.meta.env.DEV) console.warn(`[landing] No existe la sección: #${id}`);
+    return false;
+  }
+  el.scrollIntoView({ behavior: 'smooth' });
+  return true;
 }

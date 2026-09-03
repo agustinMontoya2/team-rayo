@@ -4,6 +4,7 @@ import { useStore, fullName, studentPlan, formatMoney, today, currentPeriod, per
 import { validatePaymentFields } from '../../domain/validators';
 import { useRealtimeValidation } from '../../hooks/useRealtimeValidation';
 import { useToast } from '../../ui-kit';
+import { Field } from '../../Field';
 import { inputCls, selectCls, btnSecondary, btnPrimaryModal } from '../../classes';
 
 interface Props {
@@ -70,10 +71,7 @@ export function RegisterPaymentModal({ open, onClose, defaultPeriod, defaultStud
       }
     >
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">
-            Alumno <span className="text-pulso-red">*</span>
-          </label>
+        <Field label="Alumno" required>
           <select
             className={selectCls}
             value={values.student}
@@ -93,30 +91,21 @@ export function RegisterPaymentModal({ open, onClose, defaultPeriod, defaultStud
               ))}
           </select>
           {error('student') && <p className="text-xs text-pulso-red mt-1">{error('student')}</p>}
-        </div>
+        </Field>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              Período (mes y año) <span className="text-pulso-red">*</span>
-            </label>
+          <Field label="Período (mes y año)" required>
             <input type="month" className={inputCls} value={values.period} onChange={(e) => onChange('period', e.target.value)} onBlur={() => onBlur('period')} />
             {error('period') && <p className="text-xs text-pulso-red mt-1">{error('period')}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              Fecha <span className="text-pulso-red">*</span>
-            </label>
+          </Field>
+          <Field label="Fecha" required>
             <input type="date" className={inputCls} value={values.date} onChange={(e) => onChange('date', e.target.value)} onBlur={() => onBlur('date')} />
             {error('date') && <p className="text-xs text-pulso-red mt-1">{error('date')}</p>}
-          </div>
+          </Field>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">
-            Monto <span className="text-pulso-red">*</span>
-          </label>
+        <Field label="Monto" required>
           <input className={inputCls} type="number" value={values.amount} onChange={(e) => onChange('amount', e.target.value)} onBlur={() => onBlur('amount')} placeholder="Ej.: 18000" />
           {error('amount') && <p className="text-xs text-pulso-red mt-1">{error('amount')}</p>}
-        </div>
+        </Field>
         {student && (
           <div className="text-xs text-muted-foreground">
             Plan actual: {plan?.name || 'sin plan'} · cuota sugerida:{' '}

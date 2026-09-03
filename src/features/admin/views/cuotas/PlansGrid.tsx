@@ -41,7 +41,7 @@ export function PlansGrid({ onNew, onEdit }: Props) {
                 </button>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${p.type === 'competitivo' ? 'bg-pulso-red/16 text-pulso-red' : 'bg-pulso-indigo/17 text-pulso-indigo-soft'}`}>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${p.type === PLAN_TYPES.competitivo.value ? 'bg-pulso-red/16 text-pulso-red' : 'bg-pulso-indigo/17 text-pulso-indigo-soft'}`}>
                   {PLAN_TYPES[p.type].label}
                 </span>
                 {p.featured && <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/16 text-amber-400">Destacado</span>}

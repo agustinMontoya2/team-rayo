@@ -12,6 +12,8 @@ import {
   PLAN_TYPES,
   fullName,
   type Student,
+  type BeltType,
+  type PlanType,
 } from './store';
 import { cardSurface } from './classes';
 
@@ -50,7 +52,7 @@ export function Avatar({ student, size }: { student?: Student | null; size?: 'sm
   );
 }
 
-export function BeltBadge({ belt }: { belt: string }) {
+export function BeltBadge({ belt }: { belt: BeltType }) {
   const color = BELT_COLORS[belt] || '#e2e8f0';
   return (
     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-pulso-badge text-muted-foreground">
@@ -60,14 +62,15 @@ export function BeltBadge({ belt }: { belt: string }) {
   );
 }
 
-export function PlanBadge({ type }: { type?: string }) {
+export function PlanBadge({ type }: { type?: PlanType }) {
+  const isComp = type === PLAN_TYPES.competitivo.value;
   return (
     <span
       className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
-        type === 'competitivo' ? 'bg-pulso-red/16 text-pulso-red' : 'bg-pulso-indigo/17 text-pulso-indigo-soft'
+        isComp ? 'bg-pulso-red/16 text-pulso-red' : 'bg-pulso-indigo/17 text-pulso-indigo-soft'
       }`}
     >
-      {type ? PLAN_TYPES[type as keyof typeof PLAN_TYPES]?.label ?? 'Recreativo' : 'Recreativo'}
+      {type ? PLAN_TYPES[type].label : PLAN_TYPES.recreativo.label}
     </span>
   );
 }

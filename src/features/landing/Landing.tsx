@@ -9,7 +9,7 @@ import { Location } from './components/Location';
 import { Footer } from './components/Footer';
 import { FloatingButtons } from './components/FloatingButtons';
 
-export default function App() {
+export default function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <a

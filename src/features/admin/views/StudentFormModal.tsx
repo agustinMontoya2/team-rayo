@@ -11,6 +11,7 @@ import {
 } from '../domain/validators';
 import { useRealtimeValidation } from '../hooks/useRealtimeValidation';
 import { useToast } from '../ui-kit';
+import { Field } from '../Field';
 import { Upload, Trash2 } from 'lucide-react';
 import { inputPhCls, btnSecondary, btnPrimaryModal } from '../classes';
 
@@ -19,28 +20,6 @@ interface StudentFormModalProps {
   onClose: () => void;
   edit?: Student | null;
   onDone?: () => void;
-}
-
-function Field({
-  label,
-  required,
-  children,
-  hint,
-}: {
-  label: string;
-  required?: boolean;
-  children: React.ReactNode;
-  hint?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-foreground mb-1.5">
-        {label} {required && <span className="text-pulso-red">*</span>}
-      </label>
-      {children}
-      {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
-    </div>
-  );
 }
 
 export function StudentFormModal({ open, onClose, edit, onDone }: StudentFormModalProps) {

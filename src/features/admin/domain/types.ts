@@ -1,6 +1,4 @@
-export type PlanType = 'recreativo' | 'competitivo';
-export type EventType = 'competencia' | 'exhibicion' | 'taller';
-export type FightResult = 'pendiente' | 'victoria' | 'derrota';
+import type { PlanType, EventType, FightResult, BeltType } from './catalog';
 
 export interface Schedule {
   id: string;
@@ -42,7 +40,7 @@ export interface Student {
 export interface Graduation {
   id: string;
   studentId: string;
-  belt: string;
+  belt: BeltType;
   examDate: string;
   score: number;
 }
@@ -96,14 +94,3 @@ export interface RayoStore {
   sessions: Session[];
   events: Event[];
 }
-
-export const BELT_ORDER = ['Blanco', 'Amarillo', 'Naranja', 'Verde', 'Azul', 'Marrón', 'Negro'];
-export const BELT_COLORS: Record<string, string> = {
-  Blanco: '#e2e8f0',
-  Amarillo: '#facc15',
-  Naranja: '#fb923c',
-  Verde: '#34d399',
-  Azul: '#60a5fa',
-  Marrón: '#b45309',
-  Negro: '#0f172a',
-};

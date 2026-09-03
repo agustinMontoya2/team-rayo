@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { Check } from 'lucide-react';
 import { Switch } from '../../../../components/ui/switch';
-import { useStore, today, createUpdateEvent, type Event, type EventType } from '../../store';
+import { useStore, today, createUpdateEvent, EVENT_TYPES, type Event, type EventType } from '../../store';
 import { validateEventFields } from '../../domain/validators';
 import { useRealtimeValidation } from '../../hooks/useRealtimeValidation';
 import { useToast } from '../../ui-kit';
 import { Modal } from '../../Modal';
+import { Field } from '../../Field';
 import { inputCls, selectCls } from './fields';
 import { btnSecondary, btnPrimaryModal } from '../../classes';
 
 export function EventFormModal({ open, onClose, edit }: { open: boolean; onClose: () => void; edit: Event | null }) {
   const { store, setStore } = useStore();
   const toast = useToast();
-  const [type, setType] = useState<EventType>(edit ? edit.type : 'competencia');
+  const [type, setType] = useState<EventType>(edit ? edit.type : EVENT_TYPES.competencia.value);
   const [isPublic, setIsPublic] = useState(edit ? edit.public : true);
   const [description, setDescription] = useState(edit ? edit.description : '');
 
@@ -58,36 +59,28 @@ export function EventFormModal({ open, onClose, edit }: { open: boolean; onClose
       }
     >
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">
-            Nombre <span className="text-pulso-red">*</span>
-          </label>
+        <Field label="Nombre" required>
           <input className={inputCls} placeholder="Ej.: Copa Nacional" value={values.name} onChange={(e) => onChange('name', e.target.value)} onBlur={() => onBlur('name')} />
           {error('name') && <p className="text-xs text-pulso-red mt-1">{error('name')}</p>}
-        </div>
+        </Field>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              Tipo <span className="text-pulso-red">*</span>
-            </label>
+          <Field label="Tipo" required>
             <select className={selectCls} value={type} onChange={(e) => setType(e.target.value as EventType)}>
-              <option value="competencia">Competencia</option>
-              <option value="exhibicion">Exhibición</option>
-              <option value="taller">Taller / Examen</option>
+              {(Object.entries(EVENT_TYPES) as [EventType, { label: string }][]).map(([value, meta]) => (
+                <option key={value} value={value}>
+                  {value === EVENT_TYPES.taller.value ? 'Taller / Examen' : meta.label}
+                </option>
+              ))}
             </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              Fecha <span className="text-pulso-red">*</span>
-            </label>
+          </Field>
+          <Field label="Fecha" required>
             <input type="date" className={inputCls} value={values.date} onChange={(e) => onChange('date', e.target.value)} onBlur={() => onBlur('date')} />
             {error('date') && <p className="text-xs text-pulso-red mt-1">{error('date')}</p>}
-          </div>
+          </Field>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">Descripción</label>
+        <Field label="Descripción">
           <textarea rows={3} className={inputCls} value={description} onChange={(e) => setDescription(e.target.value)} />
-        </div>
+        </Field>
         <label className="flex items-center justify-between gap-3 cursor-pointer py-2 px-3 rounded-xl border border-pulso-line">
           <span className="text-sm text-foreground font-medium">Evento público</span>
           <Switch

@@ -5,6 +5,7 @@ import { useStore, today, createSession, scheduleLabel, type Session } from '../
 import { validateSessionDate } from '../../domain/validators';
 import { useRealtimeValidation } from '../../hooks/useRealtimeValidation';
 import { useToast } from '../../ui-kit';
+import { Field } from '../../Field';
 import { selectCls, btnSecondary, btnPrimaryModal } from '../../classes';
 
 interface Props {
@@ -61,15 +62,11 @@ export function OpenSessionModal({ open, onClose, onCreated }: Props) {
       }
     >
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">
-            Fecha <span className="text-pulso-red">*</span>
-          </label>
+        <Field label="Fecha" required>
           <input type="date" className={selectCls} value={values.date} onChange={(e) => onChange('date', e.target.value)} onBlur={() => onBlur('date')} />
           {error('date') && <p className="text-xs text-pulso-red mt-1">{error('date')}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">Horario habitual</label>
+        </Field>
+        <Field label="Horario habitual">
           <select className={selectCls} value={schedule} onChange={(e) => setSchedule(e.target.value)}>
             <option value="">Entrenamiento libre</option>
             {store.schedules.map((h) => (
@@ -78,7 +75,7 @@ export function OpenSessionModal({ open, onClose, onCreated }: Props) {
               </option>
             ))}
           </select>
-        </div>
+        </Field>
       </div>
     </Modal>
   );

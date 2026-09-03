@@ -58,6 +58,7 @@ export function Students() {
             <input
               type="search"
               value={q}
+              aria-label="Buscar alumnos"
               onChange={(e) => setQ(e.target.value)}
               placeholder="Buscar por nombre o DNI…"
               className="w-full pl-10 pr-4 py-2.5 bg-background border border-pulso-line rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 text-sm"
@@ -187,7 +188,7 @@ export function Students() {
         </div>
       )}
 
-      <StudentFormModal key={formOpen ? editing?.id ?? 'nuevo' : 'cerrado'} open={formOpen} onClose={() => setFormOpen(false)} edit={editing} />
+      <StudentFormModal key={formOpen ? editing?.id ?? 'nuevo' : 'student-form-cerrado'} open={formOpen} onClose={() => setFormOpen(false)} edit={editing} />
       <StudentProfileDrawer studentId={perfilId} onClose={() => setPerfilId(null)} onToggle={toggleAlumno} />
     </div>
   );

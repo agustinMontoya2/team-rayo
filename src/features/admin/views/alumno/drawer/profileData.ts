@@ -1,8 +1,8 @@
-import type { Plan, Graduation, Fee, Session, CompetitionHistoryEntry } from '../../../store';
+import type { Plan, Graduation, Fee, Session, CompetitionHistoryEntry, BeltType } from '../../../store';
 
 export interface StudentProfileData {
   p: Plan | null;
-  belt: string;
+  belt: BeltType;
   grados: Graduation[];
   jTodas: Session[];
   jPres: number;

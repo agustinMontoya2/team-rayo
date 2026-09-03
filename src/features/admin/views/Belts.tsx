@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
-import { useStore, fullName, currentBelt, formatDate, today, formatNumber, sortByDateDesc, BELT_ORDER, BELT_COLORS, registerGraduation } from '../store';
+import { useStore, fullName, currentBelt, formatDate, today, formatNumber, sortByDateDesc, BELTS, BELT_COLORS, registerGraduation, type BeltType } from '../store';
 import { validateGraduationFields } from '../domain/validators';
 import { useRealtimeValidation } from '../hooks/useRealtimeValidation';
 import { useToast, BeltBadge } from '../ui-kit';
+import { Field } from '../Field';
 import { Check } from 'lucide-react';
 import { selectCls, cardSurface } from '../classes';
 
@@ -12,7 +13,7 @@ export function Belts() {
 
   const [sel, setSel] = useState<string>(store.students[0] ? store.students[0].id : '');
   const [gStudent, setGStudent] = useState<string>(store.students[0] ? store.students[0].id : '');
-  const [gBelt, setGBelt] = useState<string>(BELT_ORDER[0]);
+  const [gBelt, setGBelt] = useState<BeltType>(BELTS[0]);
 
   const initial = { examDate: today(), score: '' as string | number };
   const validateField = (v: typeof initial, field: string): string => validateGraduationFields(v)[field] || '';
@@ -64,15 +65,16 @@ export function Belts() {
           <h3 className="text-lg font-extrabold tracking-tight">Historial</h3>
           <p className="text-sm text-muted-foreground mb-4">El cinturón actual sale de la última graduación.</p>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-foreground mb-1.5">Alumno</label>
-            <select className={selectCls} value={sel} onChange={(e) => setSel(e.target.value)}>
-              {store.students.map((al) => (
-                <option key={al.id} value={al.id}>
-                  {fullName(al)}
-                  {al.active ? '' : ' (inactivo)'}
-                </option>
-              ))}
-            </select>
+            <Field label="Alumno">
+              <select className={selectCls} value={sel} onChange={(e) => setSel(e.target.value)}>
+                {store.students.map((al) => (
+                  <option key={al.id} value={al.id}>
+                    {fullName(al)}
+                    {al.active ? '' : ' (inactivo)'}
+                  </option>
+                ))}
+              </select>
+            </Field>
           </div>
           {student && (
             <p className="text-sm mb-3">
@@ -106,10 +108,7 @@ export function Belts() {
           <h3 className="text-lg font-extrabold tracking-tight">Registrar graduación</h3>
           <p className="text-sm text-muted-foreground mb-4">Cinturón obtenido, fecha del examen y puntuación.</p>
           <form className="space-y-4" onSubmit={handleRegister} noValidate>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                Alumno <span className="text-pulso-red">*</span>
-              </label>
+            <Field label="Alumno" required>
               <select className={selectCls} value={gStudent} onChange={(e) => setGStudent(e.target.value)}>
                 {store.students.map((al) => (
                   <option key={al.id} value={al.id}>
@@ -117,28 +116,19 @@ export function Belts() {
                   </option>
                 ))}
               </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                Cinturón obtenido <span className="text-pulso-red">*</span>
-              </label>
-              <select className={selectCls} value={gBelt} onChange={(e) => setGBelt(e.target.value)}>
-                {BELT_ORDER.map((g) => (
+            </Field>
+            <Field label="Cinturón obtenido" required>
+              <select className={selectCls} value={gBelt} onChange={(e) => setGBelt(e.target.value as BeltType)}>
+                {BELTS.map((g) => (
                   <option key={g}>{g}</option>
                 ))}
               </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                Fecha del examen <span className="text-pulso-red">*</span>
-              </label>
+            </Field>
+            <Field label="Fecha del examen" required>
               <input type="date" className={selectCls} value={g.examDate} onChange={(e) => onChange('examDate', e.target.value)} onBlur={() => onBlur('examDate')} />
               {error('examDate') && <p className="text-xs text-pulso-red mt-1">{error('examDate')}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                Puntuación (0 a 10) <span className="text-pulso-red">*</span>
-              </label>
+            </Field>
+            <Field label="Puntuación (0 a 10)" required>
               <input
                 type="number"
                 step="0.5"
@@ -151,7 +141,7 @@ export function Belts() {
                 placeholder="Ej.: 8.5"
               />
               {error('score') && <p className="text-xs text-pulso-red mt-1">{error('score')}</p>}
-            </div>
+            </Field>
             <button
               type="submit"
               className="w-full flex items-center justify-center gap-2 bg-pulso-red text-primary-foreground px-4 py-3 rounded-xl font-bold text-sm hover:bg-foreground hover:text-background transition-colors"

@@ -1,4 +1,5 @@
 import type { Student, Session, Plan, RayoStore, Schedule, Fight, Event, Participant } from './types';
+import { BELTS, EVENT_TYPES, FIGHT_RESULTS, PLAN_TYPES, type BeltType } from './catalog';
 import { currentPeriod, uid } from './utils';
 
 export const DAYS_OF_WEEK = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'] as const;
@@ -19,11 +20,11 @@ export function fullName(a?: Student | null): string {
   return (((a && a.firstName) || '') + ' ' + ((a && a.lastName) || '')).trim();
 }
 
-export function currentBelt(d: RayoStore, studentId: string): string {
+export function currentBelt(d: RayoStore, studentId: string): BeltType {
   const gs = (d.graduations || [])
     .filter((g) => g.studentId === studentId)
     .sort((a, b) => (a.examDate < b.examDate ? 1 : -1));
-  return gs.length ? gs[0].belt : 'Blanco';
+  return gs.length ? gs[0].belt : BELTS[0];
 }
 
 export function studentPlan(d: RayoStore, studentId: string | null): Plan | null {
@@ -108,8 +109,8 @@ export function fightRecord(d: RayoStore, studentId: string): FightRecord {
   for (const e of d.events || []) {
     for (const f of e.fights) {
       if (f.studentId !== studentId) continue;
-      if (f.result === 'victoria') record.wins++;
-      else if (f.result === 'derrota') record.losses++;
+      if (f.result === FIGHT_RESULTS.victoria.value) record.wins++;
+      else if (f.result === FIGHT_RESULTS.derrota.value) record.losses++;
       else record.pending++;
     }
   }
@@ -124,7 +125,7 @@ export interface CompetitionHistoryEntry {
 
 export function competitionHistory(d: RayoStore, studentId: string): CompetitionHistoryEntry[] {
   return (d.events || [])
-    .filter((e) => e.type === 'competencia')
+    .filter((e) => e.type === EVENT_TYPES.competencia.value)
     .map((e) => ({
       e,
       part: e.participants.find((pp) => pp.studentId === studentId),
@@ -140,5 +141,5 @@ export function scheduleLabel(h?: Schedule | null): string {
 }
 
 export function newPlanFactory(): Plan {
-  return { id: uid('p'), name: '', type: 'recreativo', price: 0, description: '', featured: false, benefits: [] };
+  return { id: uid('p'), name: '', type: PLAN_TYPES.recreativo.value, price: 0, description: '', featured: false, benefits: [] };
 }

@@ -1,4 +1,5 @@
 import type { RayoStore, Event } from './types';
+import { EVENT_TYPES } from './catalog';
 import { today } from './utils';
 
 export const WEIGHT_MIN = 20;
@@ -180,7 +181,7 @@ export function validateParticipantFields(
   const errors: Record<string, string> = {};
   if (!input.studentId) errors.studentId = 'Elegí un alumno.';
   if (event.participants.some((p) => p.studentId === input.studentId)) errors.studentId = 'Ese alumno ya está en el evento.';
-  if (event.type === 'competencia') {
+  if (event.type === EVENT_TYPES.competencia.value) {
     const weight = validateWeight(input.compWeight ?? '');
     if (weight) errors.compWeight = `Indicá el peso de competencia ${WEIGHT_RANGE_MSG}.`;
   }

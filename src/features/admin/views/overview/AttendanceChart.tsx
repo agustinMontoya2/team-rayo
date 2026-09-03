@@ -19,8 +19,8 @@ export function AttendanceChart({ points }: { points: AttendanceChartPoint[] }) 
             <div key={c.date} className="flex flex-col items-center justify-end h-full gap-2 min-w-0">
               <span className="font-mono text-[11px] text-pulso-indigo-soft">{c.presentCount}/{c.total}</span>
               <div
-                className="w-9 rounded-t-lg rounded-b-sm"
-                style={{ height: `${c.pct}%`, background: 'var(--pulso-red)' }}
+                className="w-9 rounded-t-lg rounded-b-sm bg-pulso-red"
+                style={{ height: `${c.pct}%` }}
                 title={`${formatDate(c.date)} · ${c.presentCount}/${c.total} presentes`}
               />
               <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground whitespace-nowrap">

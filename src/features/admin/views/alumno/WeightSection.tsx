@@ -4,6 +4,7 @@ import { AccordionItem, AccordionTrigger, AccordionContent } from '../../../../c
 import { useStore, fullName, formatDate, formatNumber, formatWeight, today, sortByDateAsc, registerCurrentWeight, registerHistoricalWeight, deleteWeightEntry, type Student } from '../../store';
 import { validateWeight, validateWeightDate } from '../../domain/validators';
 import { useToast } from '../../ui-kit';
+import { Field } from '../../Field';
 import { ConfirmDialog } from '../../ConfirmDialog';
 import { triggerCls } from './accordionCls';
 
@@ -112,6 +113,7 @@ export function WeightSection({ student }: Props) {
             min="20"
             max="250"
             value={weightInput}
+            aria-label="Peso actual (kg)"
             onChange={(e) => {
               setWeightInput(e.target.value);
               if (currentErr) setCurrentErr(validateWeight(e.target.value));
@@ -135,16 +137,14 @@ export function WeightSection({ student }: Props) {
         </div>
         {showWeightForm && (
           <div className="flex gap-2 flex-wrap items-end mt-2">
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">Fecha</label>
+            <Field label="Fecha" labelClassName="block text-xs text-muted-foreground mb-1">
               <input type="date" value={histDate} onChange={(e) => { setHistDate(e.target.value); histFieldError('histDate', validateWeightDate(e.target.value)); }} onBlur={() => histBlur('histDate')} className="px-3 py-2 bg-pulso-input border border-pulso-line rounded-xl text-foreground text-sm" />
               {histErr.histDate && <p className="text-[11px] text-pulso-red mt-0.5">{histErr.histDate}</p>}
-            </div>
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">Peso (kg)</label>
+            </Field>
+            <Field label="Peso (kg)" labelClassName="block text-xs text-muted-foreground mb-1">
               <input type="number" step="0.1" min="20" max="250" value={histValue} onChange={(e) => { setHistValue(e.target.value); histFieldError('histValue', validateWeight(e.target.value)); }} onBlur={() => histBlur('histValue')} placeholder="Ej.: 63" className="px-3 py-2 bg-pulso-input border border-pulso-line rounded-xl text-foreground text-sm w-24" />
               {histErr.histValue && <p className="text-[11px] text-pulso-red mt-0.5">{histErr.histValue}</p>}
-            </div>
+            </Field>
             <button onClick={agregarRegistro} className="px-3 py-2 rounded-xl bg-pulso-indigo/15 text-pulso-indigo-soft border border-pulso-indigo/32 text-sm font-bold hover:bg-pulso-indigo/26 inline-flex items-center gap-1.5">
               <Check className="w-4 h-4" /> Guardar
             </button>

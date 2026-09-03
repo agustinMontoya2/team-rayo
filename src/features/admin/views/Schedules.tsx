@@ -6,6 +6,7 @@ import { useRealtimeValidation } from '../hooks/useRealtimeValidation';
 import { useToast, Empty } from '../ui-kit';
 import { ConfirmDialog } from '../ConfirmDialog';
 import { Modal } from '../Modal';
+import { Field } from '../Field';
 import { inputCls, selectCls, btnPrimary, btnPrimaryModal, btnSecondary, iconBtn, iconBtnDanger, cardSurface } from '../classes';
 
 export function Schedules() {
@@ -124,32 +125,23 @@ export function Schedules() {
         }
       >
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              Día <span className="text-pulso-red">*</span>
-            </label>
+          <Field label="Día" required>
             <select className={selectCls} value={values.dia} onChange={(e) => onChange('dia', e.target.value)} onBlur={() => onBlur('dia')}>
               {DAYS_OF_WEEK.map((d) => (
                 <option key={d}>{d}</option>
               ))}
             </select>
             {error('dia') && <p className="text-xs text-pulso-red mt-1">{error('dia')}</p>}
-          </div>
+          </Field>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                Inicio <span className="text-pulso-red">*</span>
-              </label>
+            <Field label="Inicio" required>
               <input type="time" className={inputCls} value={values.inicio} onChange={(e) => onChange('inicio', e.target.value)} onBlur={() => onBlur('inicio')} />
               {error('inicio') && <p className="text-xs text-pulso-red mt-1">{error('inicio')}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                Fin <span className="text-pulso-red">*</span>
-              </label>
+            </Field>
+            <Field label="Fin" required>
               <input type="time" className={inputCls} value={values.fin} onChange={(e) => onChange('fin', e.target.value)} onBlur={() => onBlur('fin')} />
               {error('fin') && <p className="text-xs text-pulso-red mt-1">{error('fin')}</p>}
-            </div>
+            </Field>
           </div>
         </div>
       </Modal>

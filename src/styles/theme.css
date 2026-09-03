@@ -40,25 +40,6 @@
   --sidebar-border: #262C3A;
   --sidebar-ring: #8B93FF;
 
-  /* Pulso custom tokens */
-  --pulso-red: #FF4053;
-  --pulso-red-deep: #D4243A;
-  --pulso-indigo: #8B93FF;
-  --pulso-indigo-soft: #C7CBFF;
-  --pulso-surface: #141821;
-  --pulso-surface2: #181D28;
-  --pulso-bg: #0D0F14;
-  --pulso-line: #262C3A;
-  --pulso-input: #10141D;
-  --pulso-panel: #12161F;
-  --pulso-line-strong: #232B3D;
-  --pulso-badge: #262D3E;
-  --pulso-line-bright: #303A52;
-  --pulso-switch-off: #333B4F;
-  --pulso-border: #39435C;
-  --pulso-muted-text: #667085;
-  --pulso-glass: rgba(13, 15, 20, 0.72);
-  --pulso-blur: blur(14px);
 }
 
 .dark {
@@ -139,24 +120,24 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* Pulso semantic colors */
-  --color-surface: var(--pulso-surface);
-  --color-pulso-red: var(--pulso-red);
-  --color-pulso-red-deep: var(--pulso-red-deep);
-  --color-pulso-indigo: var(--pulso-indigo);
-  --color-pulso-indigo-soft: var(--pulso-indigo-soft);
-  --color-pulso-surface: var(--pulso-surface);
-  --color-pulso-surface2: var(--pulso-surface2);
-  --color-pulso-bg: var(--pulso-bg);
-  --color-pulso-line: var(--pulso-line);
-  --color-pulso-input: var(--pulso-input);
-  --color-pulso-panel: var(--pulso-panel);
-  --color-pulso-line-strong: var(--pulso-line-strong);
-  --color-pulso-badge: var(--pulso-badge);
-  --color-pulso-line-bright: var(--pulso-line-bright);
-  --color-pulso-switch-off: var(--pulso-switch-off);
-  --color-pulso-border: var(--pulso-border);
-  --color-pulso-muted-text: var(--pulso-muted-text);
-  --color-pulso-glass: var(--pulso-glass);
+  --color-surface: #141821;
+  --color-pulso-red: #FF4053;
+  --color-pulso-red-deep: #D4243A;
+  --color-pulso-indigo: #8B93FF;
+  --color-pulso-indigo-soft: #C7CBFF;
+  --color-pulso-surface: #141821;
+  --color-pulso-surface2: #181D28;
+  --color-pulso-bg: #0D0F14;
+  --color-pulso-line: #262C3A;
+  --color-pulso-input: #10141D;
+  --color-pulso-panel: #12161F;
+  --color-pulso-line-strong: #232B3D;
+  --color-pulso-badge: #262D3E;
+  --color-pulso-line-bright: #303A52;
+  --color-pulso-switch-off: #333B4F;
+  --color-pulso-border: #39435C;
+  --color-pulso-muted-text: #667085;
+  --color-pulso-glass: rgba(13, 15, 20, 0.72);
 }
 
 @layer base {

@@ -140,7 +140,7 @@ export function Attendance() {
 
       {/* Modal abrir jornada */}
       <OpenSessionModal
-        key={showAbrir ? 'abrir' : 'cerrado'}
+        key={showAbrir ? 'abrir' : 'open-session-cerrado'}
         open={showAbrir}
         onClose={() => setShowAbrir(false)}
         onCreated={(j) => setTomarId(j.id)}
@@ -148,7 +148,7 @@ export function Attendance() {
 
       {/* Modal tomar asistencia */}
       <AttendanceTakeModal
-        key={tomarId ?? 'ninguno'}
+        key={tomarId ?? 'attendance-take-cerrado'}
         session={sessionTake ?? undefined}
         activeStudents={sessionTake ? studentsInSession(store, sessionTake.date) : active}
         onClose={() => setTomarId(null)}

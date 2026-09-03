@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
-import { useStore, fullName, formatDate, formatWeight, addParticipant, removeParticipant, type Event } from '../../store';
+import { useStore, fullName, formatDate, formatWeight, addParticipant, removeParticipant, EVENT_TYPES, type Event } from '../../store';
 import { validateParticipantFields } from '../../domain/validators';
 import { useRealtimeValidation } from '../../hooks/useRealtimeValidation';
 import { useToast, Avatar } from '../../ui-kit';
@@ -66,7 +66,7 @@ export function ParticipantsModal({ event, onClose }: { event: Event | undefined
         }
       >
       <div className="space-y-3 mb-4">
-        {event.type === 'competencia' ? (
+        {event.type === EVENT_TYPES.competencia.value ? (
           <p className="text-xs text-muted-foreground">
             <span className="text-foreground font-semibold">{event.participants.length} participantes</span>. El peso de competencia se guarda por evento.
           </p>
@@ -76,7 +76,7 @@ export function ParticipantsModal({ event, onClose }: { event: Event | undefined
           </p>
         )}
         <div className="flex flex-col sm:flex-row gap-2 flex-wrap">
-          <select className={selectCls + ' flex-1 min-w-0'} value={values.newStudent} onChange={(e) => onChange('newStudent', e.target.value)} onBlur={() => onBlur('newStudent')}>
+          <select className={selectCls + ' flex-1 min-w-0'} aria-label="Agregar alumno" value={values.newStudent} onChange={(e) => onChange('newStudent', e.target.value)} onBlur={() => onBlur('newStudent')}>
             <option value="">Agregar alumno…</option>
             {disponibles.map((a) => (
               <option key={a.id} value={a.id}>
@@ -84,10 +84,11 @@ export function ParticipantsModal({ event, onClose }: { event: Event | undefined
               </option>
             ))}
           </select>
-          {event.type === 'competencia' && (
+          {event.type === EVENT_TYPES.competencia.value && (
             <input
               className="w-[120px] shrink-0 px-4 py-3 bg-pulso-input border border-pulso-line rounded-xl text-foreground focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 transition-colors text-sm"
               placeholder="Peso en kg"
+              aria-label="Peso en kg"
               value={values.peso}
               onChange={(e) => onChange('peso', e.target.value)}
               onBlur={() => onBlur('peso')}
@@ -110,7 +111,7 @@ export function ParticipantsModal({ event, onClose }: { event: Event | undefined
                 <Avatar student={a} />
                 <div className="flex-1">
                   <div className="text-sm text-foreground font-medium">{a ? fullName(a) : 'Alumno eliminado'}</div>
-                  {event.type === 'competencia' && (
+                  {event.type === EVENT_TYPES.competencia.value && (
                     <div className="text-xs text-muted-foreground">Peso de competencia: {p.compWeight != null ? formatWeight(p.compWeight) : 'sin definir'}</div>
                   )}
                 </div>

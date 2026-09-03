@@ -3,6 +3,7 @@ import { Check } from 'lucide-react';
 import { useStore, type Plan, PLAN_TYPES, newPlanFactory } from '../../store';
 import { validatePlanName, validatePlanPrice } from '../../domain/validators';
 import { Modal } from '../../Modal';
+import { Field } from '../../Field';
 import { inputCls, selectCls, btnSecondary, btnPrimaryModal } from '../../classes';
 
 interface Props {
@@ -69,10 +70,7 @@ export function PlanModal({ plan, onClose, onSave }: Props) {
     >
       {plan && (
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              Nombre <span className="text-pulso-red">*</span>
-            </label>
+          <Field label="Nombre" required>
             <input
               className={inputCls}
               value={local.name}
@@ -85,12 +83,9 @@ export function PlanModal({ plan, onClose, onSave }: Props) {
               placeholder="Ej.: Muay Thai competitivo"
             />
             {errors.name && <p className="text-xs text-pulso-red mt-1">{errors.name}</p>}
-          </div>
+          </Field>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                Tipo <span className="text-pulso-red">*</span>
-              </label>
+            <Field label="Tipo" required>
               <select className={selectCls} value={local.type} onChange={(e) => setLocal({ ...local, type: e.target.value as Plan['type'] })}>
                 {Object.values(PLAN_TYPES).map((t) => (
                   <option key={t.value} value={t.value}>
@@ -98,11 +93,8 @@ export function PlanModal({ plan, onClose, onSave }: Props) {
                   </option>
                 ))}
               </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">
-                Precio mensual <span className="text-pulso-red">*</span>
-              </label>
+            </Field>
+            <Field label="Precio mensual" required>
               <input
                 className={inputCls}
                 type="number"
@@ -115,16 +107,12 @@ export function PlanModal({ plan, onClose, onSave }: Props) {
                 onBlur={() => ensureTouched('price')}
               />
               {errors.price && <p className="text-xs text-pulso-red mt-1">{errors.price}</p>}
-            </div>
+            </Field>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Descripción</label>
+          <Field label="Descripción">
             <textarea rows={2} className={inputCls} value={local.description} onChange={(e) => setLocal({ ...local, description: e.target.value })} />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              Beneficios <span className="text-pulso-red">*</span>
-            </label>
+          </Field>
+          <Field label="Beneficios" required hint="Escribí un beneficio por línea.">
             <textarea
               rows={3}
               className={inputCls}
@@ -132,8 +120,7 @@ export function PlanModal({ plan, onClose, onSave }: Props) {
               onChange={(e) => setLocal({ ...local, benefits: e.target.value.split('\n') })}
               placeholder={'Un beneficio por línea:\n2 clases semanales\nSparring los sábados'}
             />
-            <p className="text-xs text-muted-foreground mt-1">Escribí un beneficio por línea.</p>
-          </div>
+          </Field>
           <div>
             <label className="flex items-center justify-between gap-3 cursor-pointer py-2 px-3 rounded-xl border border-pulso-line">
               <span className="text-sm text-foreground font-medium">Plan destacado</span>

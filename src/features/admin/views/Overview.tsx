@@ -100,15 +100,15 @@ export function Overview() {
       </div>
 
       {/* Modales de acciones rápidas (se abren sobre el Resumen) */}
-      <StudentFormModal key={modal === 'alumno' ? 'alumno' : 'cerrado'} open={modal === 'alumno'} onClose={() => setModal(null)} />
+      <StudentFormModal key={modal === 'alumno' ? 'alumno' : 'alumno-cerrado'} open={modal === 'alumno'} onClose={() => setModal(null)} />
       <OpenSessionModal
-        key={modal === 'jornada' ? 'jornada' : 'cerrado'}
+        key={modal === 'jornada' ? 'jornada' : 'jornada-cerrado'}
         open={modal === 'jornada'}
         onClose={() => setModal(null)}
         onCreated={() => toast('ok', 'Jornada abierta. Dale seguimiento desde Asistencia.')}
       />
-      <RegisterPaymentModal key={modal === 'pago' ? 'pago' : 'cerrado'} open={modal === 'pago'} onClose={() => setModal(null)} />
-      <EventFormModal key={modal === 'evento' ? 'evento' : 'cerrado'} open={modal === 'evento'} onClose={() => setModal(null)} edit={null} />
+      <RegisterPaymentModal key={modal === 'pago' ? 'pago' : 'pago-cerrado'} open={modal === 'pago'} onClose={() => setModal(null)} />
+      <EventFormModal key={modal === 'evento' ? 'evento' : 'evento-cerrado'} open={modal === 'evento'} onClose={() => setModal(null)} edit={null} />
     </div>
   );
 }

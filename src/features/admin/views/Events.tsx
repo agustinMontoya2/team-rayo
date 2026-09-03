@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Plus, Pencil, Users, Trash2, Globe, EyeOff, Swords } from 'lucide-react';
-import { useStore, formatDate, toggleEventPublic, deleteEvent, eventTypeBadge, eventTypeLabel, EVENT_FILTERS, type Event } from '../store';
+import { useStore, formatDate, toggleEventPublic, deleteEvent, eventTypeBadge, eventTypeLabel, EVENT_FILTERS, EVENT_TYPES, type Event } from '../store';
 import { useToast } from '../ui-kit';
 import { ConfirmDialog } from '../ConfirmDialog';
 import { EventFormModal } from './eventos/EventFormModal';
@@ -99,10 +99,10 @@ export function Events() {
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Users className="w-3.5 h-3.5" />
                 {e.participants.length} participante{e.participants.length === 1 ? '' : 's'}
-                {e.type === 'competencia' && e.fights.length > 0 && ` · ${e.fights.length} pelea${e.fights.length === 1 ? '' : 's'}`}
+                {e.type === EVENT_TYPES.competencia.value && e.fights.length > 0 && ` · ${e.fights.length} pelea${e.fights.length === 1 ? '' : 's'}`}
               </div>
               <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-pulso-line">
-                {e.type === 'competencia' && (
+                {e.type === EVENT_TYPES.competencia.value && (
                   <button
                     onClick={() => setPeleasId(e.id)}
                     className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-pulso-indigo/32 text-pulso-indigo-soft text-xs font-bold hover:bg-pulso-indigo/16 transition-colors"
@@ -150,9 +150,9 @@ export function Events() {
         </div>
       )}
 
-      <EventFormModal key={showForm ? form?.id ?? 'nuevo' : 'cerrado'} open={showForm} onClose={() => setShowForm(false)} edit={form} />
-      <ParticipantsModal key={partId ?? 'ninguno'} event={evtParticipants ?? undefined} onClose={() => setPartId(null)} />
-      <FightsModal key={peleasId ?? 'ninguno'} event={evtFights ?? undefined} onClose={() => setPeleasId(null)} />
+      <EventFormModal key={showForm ? form?.id ?? 'nuevo' : 'event-form-cerrado'} open={showForm} onClose={() => setShowForm(false)} edit={form} />
+      <ParticipantsModal key={partId ?? 'participants-cerrado'} event={evtParticipants ?? undefined} onClose={() => setPartId(null)} />
+      <FightsModal key={peleasId ?? 'fights-cerrado'} event={evtFights ?? undefined} onClose={() => setPeleasId(null)} />
 
       {/* Confirmar eliminar evento */}
       <ConfirmDialog

@@ -1,4 +1,5 @@
-import type { RayoStore, Event, Fight, FightResult } from '../types';
+import type { RayoStore, Event, Fight } from '../types';
+import { EVENT_TYPES, FIGHT_RESULTS, type FightResult } from '../catalog';
 import { uid } from '../utils';
 import { validateEventFields, validateParticipantFields, validateFightFields } from '../validators';
 import { MSG } from '../messages';
@@ -58,7 +59,7 @@ export function addParticipant(
   if (!event) return err(d, MSG.eventNotFound);
   const fieldErrors = validateParticipantFields(event, input);
   if (Object.keys(fieldErrors).length > 0) return err(d, Object.values(fieldErrors)[0], fieldErrors);
-  const weightNum = event.type === 'competencia' ? Number(input.compWeight) : null;
+  const weightNum = event.type === EVENT_TYPES.competencia.value ? Number(input.compWeight) : null;
   const participants = [...event.participants, { studentId: input.studentId, compWeight: weightNum }];
   const events = d.events.map((e) => (e.id === eventId ? { ...e, participants } : e));
   return ok({ ...d, events }, 'Participante agregado.');
@@ -95,7 +96,7 @@ export function addFight(
     studentId: input.studentId,
     opponent: input.opponent.trim(),
     opponentWeight: weightNum,
-    result: 'pendiente',
+    result: FIGHT_RESULTS.pendiente.value,
   };
   const events = d.events.map((e) => (e.id === eventId ? { ...e, fights: [...e.fights, fight] } : e));
   return ok({ ...d, events }, 'Pelea cargada.');
@@ -111,7 +112,11 @@ export function setFightResult(
     e.id === eventId ? { ...e, fights: e.fights.map((f) => (f.id === fightId ? { ...f, result } : f)) } : e
   );
   const msg =
-    result === 'pendiente' ? 'Pelea marcada como pendiente.' : result === 'victoria' ? 'Resultado: victoria.' : 'Resultado: derrota.';
+    result === FIGHT_RESULTS.pendiente.value
+      ? 'Pelea marcada como pendiente.'
+      : result === FIGHT_RESULTS.victoria.value
+        ? 'Resultado: victoria.'
+        : 'Resultado: derrota.';
   return ok({ ...d, events }, msg);
 }
 

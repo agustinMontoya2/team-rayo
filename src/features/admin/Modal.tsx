@@ -17,6 +17,7 @@ export function Modal({ open, onClose, title, sub, children, footer, wide, sm }:
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent
+        aria-describedby={undefined}
         className={`bg-pulso-panel border-pulso-line-bright rounded-[18px] p-0 gap-0 shadow-[0_34px_90px_-34px_rgba(255,64,83,.3)] max-h-[90vh] overflow-hidden grid-rows-[auto_minmax(0,1fr)_auto] [&_[data-slot='dialog-close']]:hidden ${
           wide ? 'sm:max-w-2xl' : sm ? 'sm:max-w-md' : 'sm:max-w-lg'
         }`}

@@ -5,6 +5,8 @@ import Landing from "./features/landing/Landing.tsx";
 import { PublicDataProvider } from "./features/landing/publicStore.tsx";
 import { AdminLayout } from "./features/admin/AdminLayout.tsx";
 import { StoreProvider } from "./features/admin/store.ts";
+import { QueryProvider } from "./features/admin/providers/QueryProvider.tsx";
+import { AuthProvider } from "./features/admin/providers/AuthProvider.tsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.tsx";
 import { NotFound } from "./components/NotFound.tsx";
 import { ViewLoader } from "./components/ViewLoader.tsx";
@@ -35,9 +37,13 @@ createRoot(document.getElementById("root")!).render(
           <Route
             path="/admin"
             element={
-              <StoreProvider>
-                <AdminLayout />
-              </StoreProvider>
+              <QueryProvider>
+                <AuthProvider>
+                  <StoreProvider>
+                    <AdminLayout />
+                  </StoreProvider>
+                </AuthProvider>
+              </QueryProvider>
             }
           >
             <Route index element={<Overview />} />

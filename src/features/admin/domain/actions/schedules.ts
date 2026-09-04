@@ -1,5 +1,4 @@
 import type { RayoStore } from '../types';
-import { uid } from '../utils';
 import { dayIndex } from '../helpers';
 import { validateScheduleFields } from '../validators';
 import { err, ok, type ActionResult } from './common';
@@ -23,7 +22,7 @@ export function createUpdateSchedule(
     const next = sortSchedules(d.schedules.map((h) => (h.id === input.id ? { ...h, ...input } : h)));
     return ok({ ...d, schedules: next }, 'Horario actualizado.');
   }
-  const next = sortSchedules([...d.schedules, { id: uid('h'), ...input }]);
+  const next = sortSchedules([...d.schedules, { id: '', ...input }]);
   return ok({ ...d, schedules: next }, 'Horario agregado.');
 }
 

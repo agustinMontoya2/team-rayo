@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { uid, today, currentPeriod, normalize } from '../utils';
+import { today, currentPeriod, normalize } from '../utils';
 import { seed } from '../seed';
-
-describe('uid', () => {
-  it('genera ids únicos con el prefijo pasado', () => {
-    expect(uid('a')).toMatch(/^a_/);
-    expect(uid('a')).not.toBe(uid('a'));
-  });
-});
 
 describe('today / currentPeriod', () => {
   it('devuelve fechas en formato ISO', () => {

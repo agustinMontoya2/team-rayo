@@ -1,6 +1,6 @@
 import type { Student, Session, Plan, RayoStore, Schedule, Fight, Event, Participant } from './types';
 import { BELTS, EVENT_TYPES, FIGHT_RESULTS, PLAN_TYPES, type BeltType } from './catalog';
-import { currentPeriod, uid } from './utils';
+import { currentPeriod } from './utils';
 
 export const DAYS_OF_WEEK = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'] as const;
 
@@ -141,5 +141,5 @@ export function scheduleLabel(h?: Schedule | null): string {
 }
 
 export function newPlanFactory(): Plan {
-  return { id: uid('p'), name: '', type: PLAN_TYPES.recreativo.value, price: 0, description: '', featured: false, benefits: [] };
+  return { id: '', name: '', type: PLAN_TYPES.recreativo.value, price: 0, description: '', featured: false, benefits: [] };
 }

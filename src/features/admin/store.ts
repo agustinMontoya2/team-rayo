@@ -25,15 +25,11 @@ export * from './domain/utils';
 export * from './domain/actions';
 export * from './domain/catalog';
 
-export type Action =
-  | { type: 'SET'; store: RayoStore }
-  | { type: 'RESET'; store: RayoStore };
+export type Action = { type: 'SET'; store: RayoStore };
 
 function reducer(state: RayoStore, action: Action): RayoStore {
   switch (action.type) {
     case 'SET':
-      return action.store;
-    case 'RESET':
       return action.store;
     default:
       return state;
@@ -64,7 +60,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [persistError, setPersistError] = useState(false);
 
   const storeRef = useRef(store);
-  storeRef.current = store;
+
+  useEffect(() => {
+    storeRef.current = store;
+  }, [store]);
 
   useEffect(() => {
     if (query.data) dispatch({ type: 'SET', store: query.data });

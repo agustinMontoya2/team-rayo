@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
-import { PLAN_TYPES, EVENT_TYPES, type EventType } from '../admin/domain/catalog';
-import { DAYS_OF_WEEK } from '../admin/domain/helpers';
+import { mapPlan, mapSchedule, EVENT_FROM_DB } from '../../lib/domain-mappers';
+import { PLAN_TYPES, type EventType } from '../admin/domain/catalog';
 import type { Plan, Schedule } from '../admin/domain/types';
 
 export const PUBLIC_GYM_SLUG = 'team-rayo';
@@ -22,43 +22,11 @@ interface PublicGymData {
 
 const DAY_ORDER = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-const EVENT_FROM_DB: Record<string, EventType> = {
-  competition: 'competencia',
-  exhibition: 'exhibicion',
-  workshop: 'taller',
-};
-
-type DbRow = Record<string, unknown>;
-
-function mapSchedule(row: DbRow): Schedule {
-  const idx = Number(row.day_of_week);
-  const day = DAYS_OF_WEEK[Math.max(0, Math.min(DAYS_OF_WEEK.length - 1, idx - 1))] ?? '';
-  return {
-    id: String(row.id),
-    day,
-    start: String(row.start_time).slice(0, 5),
-    end: String(row.end_time).slice(0, 5),
-  };
-}
-
-function mapPlan(row: DbRow): Plan {
-  const benefits = Array.isArray(row.benefits) ? (row.benefits as string[]) : [];
+function mapEvent(row: Record<string, unknown>): PublicEvent {
   return {
     id: String(row.id),
     name: String(row.name),
-    type: row.type === 'competitivo' ? 'competitivo' : 'recreativo',
-    price: Number(row.price),
-    description: String(row.description ?? ''),
-    featured: Boolean(row.featured),
-    benefits,
-  };
-}
-
-function mapEvent(row: DbRow): PublicEvent {
-  return {
-    id: String(row.id),
-    name: String(row.name),
-    type: EVENT_FROM_DB[String(row.type)] ?? EVENT_TYPES.competencia.value,
+    type: EVENT_FROM_DB[String(row.type)] ?? 'competencia',
     date: String(row.date),
     description: String(row.description ?? ''),
   };

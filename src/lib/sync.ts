@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { seed } from '../features/admin/domain/seed';
 import { DAYS_OF_WEEK } from '../features/admin/domain/helpers';
+import { mapPlan, mapSchedule, EVENT_FROM_DB, type DbRow } from './domain-mappers';
 import type {
   RayoStore,
   Schedule,
@@ -12,8 +13,6 @@ import type {
   Event,
 } from '../features/admin/domain/types';
 import type { FightResult, EventType } from '../features/admin/domain/catalog';
-
-type DbRow = Record<string, unknown>;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -28,12 +27,6 @@ const EVENT_TO_DB: Record<EventType, EventDb> = {
   competencia: 'competition',
   exhibicion: 'exhibition',
   taller: 'workshop',
-};
-
-const EVENT_FROM_DB: Record<string, EventType> = {
-  competition: 'competencia',
-  exhibition: 'exhibicion',
-  workshop: 'taller',
 };
 
 const FIGHT_TO_DB: Record<FightResult, FightDb> = {
@@ -73,30 +66,6 @@ async function fetchRoot(table: string, gymId: string): Promise<DbRow[]> {
 // ---------------------------------------------------------------------------
 // Mapeos DB -> dominio (camelCase)
 // ---------------------------------------------------------------------------
-
-function mapSchedule(row: DbRow): Schedule {
-  const idx = Number(row.day_of_week);
-  const day = DAYS_OF_WEEK[Math.max(0, Math.min(DAYS_OF_WEEK.length - 1, idx - 1))] ?? '';
-  return {
-    id: String(row.id),
-    day,
-    start: String(row.start_time).slice(0, 5),
-    end: String(row.end_time).slice(0, 5),
-  };
-}
-
-function mapPlan(row: DbRow): Plan {
-  const benefits = Array.isArray(row.benefits) ? (row.benefits as string[]) : [];
-  return {
-    id: String(row.id),
-    name: String(row.name),
-    type: row.type === 'competitivo' ? 'competitivo' : 'recreativo',
-    price: Number(row.price),
-    description: String(row.description ?? ''),
-    featured: Boolean(row.featured),
-    benefits,
-  };
-}
 
 function mapStudent(row: DbRow, weights: DbRow[]): Student {
   const weightHistory = weights
@@ -275,34 +244,34 @@ function diff<T extends { id: string }>(prev: T[], next: T[]): DiffResult<T> {
 
 export async function syncSave(prev: RayoStore, next: RayoStore, gymId: string): Promise<RayoStore> {
   const schedules = diff(prev.schedules, next.schedules);
-  for (const s of schedules.inserts) insertRow('schedules', scheduleRow(s, gymId));
-  for (const s of schedules.updates) updateRow('schedules', s.id, scheduleRow(s, gymId));
-  if (schedules.deletes.length) deleteRows('schedules', 'id', schedules.deletes);
+  await Promise.all(schedules.inserts.map((s) => insertRow('schedules', scheduleRow(s, gymId))));
+  await Promise.all(schedules.updates.map((s) => updateRow('schedules', s.id, scheduleRow(s, gymId))));
+  if (schedules.deletes.length) await deleteRows('schedules', 'id', schedules.deletes);
 
   const plans = diff(prev.plans, next.plans);
-  for (const p of plans.inserts) insertRow('plans', planRow(p, gymId));
-  for (const p of plans.updates) updateRow('plans', p.id, planRow(p, gymId));
-  if (plans.deletes.length) deleteRows('plans', 'id', plans.deletes);
+  await Promise.all(plans.inserts.map((p) => insertRow('plans', planRow(p, gymId))));
+  await Promise.all(plans.updates.map((p) => updateRow('plans', p.id, planRow(p, gymId))));
+  if (plans.deletes.length) await deleteRows('plans', 'id', plans.deletes);
 
   const students = diff(prev.students, next.students);
-  for (const st of students.inserts) insertRow('students', studentRow(st, gymId));
-  for (const st of students.updates) updateRow('students', st.id, studentRow(st, gymId));
-  if (students.deletes.length) deleteRows('students', 'id', students.deletes);
+  await Promise.all(students.inserts.map((st) => insertRow('students', studentRow(st, gymId))));
+  await Promise.all(students.updates.map((st) => updateRow('students', st.id, studentRow(st, gymId))));
+  if (students.deletes.length) await deleteRows('students', 'id', students.deletes);
 
   const fees = diff(prev.fees, next.fees);
-  for (const f of fees.inserts) insertRow('payments', paymentRow(f));
-  for (const f of fees.updates) updateRow('payments', f.id, paymentRow(f));
-  if (fees.deletes.length) deleteRows('payments', 'id', fees.deletes);
+  await Promise.all(fees.inserts.map((f) => insertRow('payments', paymentRow(f))));
+  await Promise.all(fees.updates.map((f) => updateRow('payments', f.id, paymentRow(f))));
+  if (fees.deletes.length) await deleteRows('payments', 'id', fees.deletes);
 
   const grads = diff(prev.graduations, next.graduations);
-  for (const g of grads.inserts) insertRow('belt_exams', beltRow(g));
-  for (const g of grads.updates) updateRow('belt_exams', g.id, beltRow(g));
-  if (grads.deletes.length) deleteRows('belt_exams', 'id', grads.deletes);
+  await Promise.all(grads.inserts.map((g) => insertRow('belt_exams', beltRow(g))));
+  await Promise.all(grads.updates.map((g) => updateRow('belt_exams', g.id, beltRow(g))));
+  if (grads.deletes.length) await deleteRows('belt_exams', 'id', grads.deletes);
 
   const events = diff(prev.events, next.events);
-  for (const e of events.inserts) insertRow('events', eventRow(e, gymId));
-  for (const e of events.updates) updateRow('events', e.id, eventRow(e, gymId));
-  if (events.deletes.length) deleteRows('events', 'id', events.deletes);
+  await Promise.all(events.inserts.map((e) => insertRow('events', eventRow(e, gymId))));
+  await Promise.all(events.updates.map((e) => updateRow('events', e.id, eventRow(e, gymId))));
+  if (events.deletes.length) await deleteRows('events', 'id', events.deletes);
 
   // Hijos
   await reconcileSessions(prev, next, gymId);

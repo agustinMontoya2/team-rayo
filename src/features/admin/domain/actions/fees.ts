@@ -1,5 +1,4 @@
 import type { RayoStore, Fee } from '../types';
-import { uid } from '../utils';
 import { validatePaymentFields } from '../validators';
 import { err, ok, type ActionResult } from './common';
 
@@ -19,7 +18,7 @@ export function registerPayment(
   }
 
   const fee: Fee = {
-    id: uid('c'),
+    id: '',
     studentId: input.studentId,
     period: input.period,
     amount,

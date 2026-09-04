@@ -1,5 +1,5 @@
 import type { RayoStore, Student } from '../types';
-import { uid, today } from '../utils';
+import { today } from '../utils';
 import { validateStudentFields, validateWeight, validateWeightDate } from '../validators';
 import { MSG } from '../messages';
 import { err, ok, type ActionResult } from './common';
@@ -106,7 +106,7 @@ export function saveStudent(
     return ok({ ...d, students: updated }, 'Datos actualizados.');
   }
   const nuevo: Student = {
-    id: uid('a'),
+    id: '',
     ...data,
     active: true,
     weightHistory: data.currentWeight != null ? [{ date: data.enrollmentDate, weight: data.currentWeight }] : [],

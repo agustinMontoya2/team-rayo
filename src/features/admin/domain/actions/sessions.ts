@@ -1,5 +1,4 @@
 import type { RayoStore, Graduation, Session } from '../types';
-import { uid } from '../utils';
 import { studentsInSession } from '../helpers';
 import type { BeltType } from '../catalog';
 import { validateSessionDate, validateGraduationFields } from '../validators';
@@ -18,7 +17,7 @@ export function saveAttendance(d: RayoStore, sessionId: string, present: string[
 export function createSession(d: RayoStore, date: string, scheduleId: string): ActionResult {
   const dateErr = validateSessionDate(d, date);
   if (dateErr) return err(d, dateErr, { date: dateErr });
-  const session: Session = { id: uid('j'), date, scheduleId: scheduleId || null, present: [] };
+  const session: Session = { id: '', date, scheduleId: scheduleId || null, present: [] };
   return ok({ ...d, sessions: [...d.sessions, session] });
 }
 
@@ -35,7 +34,7 @@ export function registerGraduation(
   if (Object.keys(fieldErrors).length > 0) return err(d, Object.values(fieldErrors)[0], fieldErrors);
   if (!d.students.some((a) => a.id === input.studentId)) return err(d, MSG.studentNotFound);
   const grad: Graduation = {
-    id: uid('g'),
+    id: '',
     studentId: input.studentId,
     belt: input.belt,
     examDate: input.examDate,

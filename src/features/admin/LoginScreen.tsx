@@ -1,14 +1,15 @@
 ﻿import { useState } from 'react';
 import logoImg from '/assets/logo.webp';
-import { verifyCredentials } from './auth';
 import { Field } from './Field';
+import { useAuthContext } from './providers/AuthProvider';
 
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
-  const [username, setUsername] = useState('');
+  const { login } = useAuthContext();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [checking, setChecking] = useState(false);
@@ -17,12 +18,12 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     e.preventDefault();
     setChecking(true);
     setError('');
-    const ok = verifyCredentials(username.trim(), password);
+    const res = await login(email, password);
     setChecking(false);
-    if (ok) {
-      onLogin();
+    if (res.error) {
+      setError(res.error);
     } else {
-      setError('Usuario o contraseña incorrectos');
+      onLogin();
     }
   };
 
@@ -38,12 +39,12 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Field label="Usuario" labelClassName="block text-sm font-medium text-muted-foreground mb-1.5">
+          <Field label="Email" labelClassName="block text-sm font-medium text-muted-foreground mb-1.5">
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Tu usuario"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Tu email"
               className="w-full px-4 py-3 bg-background border border-pulso-line rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-pulso-indigo focus:ring-2 focus:ring-pulso-indigo/20 transition-colors"
             />
           </Field>

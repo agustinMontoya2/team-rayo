@@ -8,10 +8,20 @@ interface TopbarProps {
 }
 
 export function Topbar({ onMenuClick }: TopbarProps) {
-  const { user, logout } = useContext(AdminContext);
+  const { professorName, logout } = useContext(AdminContext);
   const location = useLocation();
 
   const viewInfo = VIEW_TITLES[getCurrentView(location.pathname) ?? 'resumen'];
+
+  const initials = professorName
+    ? professorName
+        .trim()
+        .split(/\s+/)
+        .map((p) => p[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : '';
 
   return (
     <header className="h-[70px] bg-pulso-glass backdrop-blur-[14px] border-b border-pulso-line flex items-center justify-between px-6 sticky top-0 z-30">
@@ -30,12 +40,12 @@ export function Topbar({ onMenuClick }: TopbarProps) {
       </div>
 
       <div className="flex items-center gap-4">
-        {user && (
+        {professorName && (
           <div className="hidden sm:flex items-center gap-2 bg-surface px-3 py-2 rounded-xl">
             <span className="w-8 h-8 rounded-[10px] bg-pulso-indigo/20 text-pulso-indigo-soft font-extrabold text-xs flex items-center justify-center">
-              {user.firstName[0]}{user.lastName[0]}
+              {initials}
             </span>
-            <span className="text-sm text-foreground font-medium">{user.firstName} {user.lastName} · {user.role}</span>
+            <span className="text-sm text-foreground font-medium">{professorName}</span>
           </div>
         )}
         <button

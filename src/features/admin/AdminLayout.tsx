@@ -5,6 +5,8 @@ import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { ToastProvider, useToast } from './ui-kit';
 import { useStore } from './store';
+import { useAuthContext } from './providers/AuthProvider';
+import { ViewLoader } from '../../components/ViewLoader';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
 
 export type AdminView =
@@ -37,13 +39,13 @@ export function getCurrentView(pathname: string): AdminView | null {
 
 interface AdminContextType {
   currentView: AdminView;
-  user: { firstName: string; lastName: string; role: string } | null;
+  professorName: string | null;
   logout: () => void;
 }
 
 export const AdminContext = createContext<AdminContextType>({
   currentView: 'resumen',
-  user: null,
+  professorName: null,
   logout: () => {},
 });
 
@@ -62,32 +64,32 @@ function PersistErrorNotifier() {
 }
 
 export function AdminLayout() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { session, professor, loading, logout } = useAuthContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isLoggedIn = !!session;
   const currentView = getCurrentView(location.pathname);
 
-  const user = isLoggedIn
-    ? { firstName: 'Daniel', lastName: 'Portillo', role: 'Profesor' }
-    : null;
+  useEffect(() => {
+    if (!session) navigate('/admin', { replace: true });
+  }, [session, navigate]);
 
-  const logout = () => {
-    setIsLoggedIn(false);
-    navigate('/admin');
-  };
+  if (loading) {
+    return <ViewLoader />;
+  }
 
   return (
     <ToastProvider>
       <PersistErrorNotifier />
       {!isLoggedIn ? (
-        <LoginScreen onLogin={() => setIsLoggedIn(true)} />
+        <LoginScreen onLogin={() => {}} />
       ) : (
         <AdminContext.Provider
           value={{
             currentView: currentView ?? 'resumen',
-            user,
+            professorName: professor ? professor.name : null,
             logout,
           }}
         >

@@ -1,12 +1,6 @@
 import type { RayoStore, Student } from "../domain/types";
 import { seed } from "./seed";
 
-export function uid(p: string): string {
-  return (
-    p + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7)
-  );
-}
-
 export function today(): string {
   return new Date().toISOString().slice(0, 10);
 }

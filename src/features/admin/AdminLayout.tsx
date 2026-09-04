@@ -73,8 +73,8 @@ export function AdminLayout() {
   const currentView = getCurrentView(location.pathname);
 
   useEffect(() => {
-    if (!session) navigate('/admin', { replace: true });
-  }, [session, navigate]);
+    if (!loading && !session) navigate('/admin', { replace: true });
+  }, [loading, session, navigate]);
 
   if (loading) {
     return <ViewLoader />;

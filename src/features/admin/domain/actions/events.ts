@@ -1,6 +1,5 @@
 import type { RayoStore, Event, Fight } from '../types';
 import { EVENT_TYPES, FIGHT_RESULTS, type FightResult } from '../catalog';
-import { uid } from '../utils';
 import { validateEventFields, validateParticipantFields, validateFightFields } from '../validators';
 import { MSG } from '../messages';
 import { err, ok, type ActionResult } from './common';
@@ -27,7 +26,7 @@ export function createUpdateEvent(
     return ok({ ...d, events }, 'Evento actualizado.');
   }
   const nuevo: Event = {
-    id: uid('e'),
+    id: '',
     name: input.name.trim(),
     type: input.type,
     date: input.date,
@@ -92,7 +91,7 @@ export function addFight(
     weightNum = Number(input.opponentWeight);
   }
   const fight: Fight = {
-    id: uid('f'),
+    id: '',
     studentId: input.studentId,
     opponent: input.opponent.trim(),
     opponentWeight: weightNum,

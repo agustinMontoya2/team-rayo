@@ -3,14 +3,18 @@ import {
   createElement,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { RayoStore } from './domain/types';
-import { load, save } from './domain/persistence';
 import { seed } from './domain/seed';
+import { syncLoad, syncSave } from '../../lib/sync';
+import { useAuthContext } from './providers/AuthProvider';
 
 export type { RayoStore } from './domain/types';
 export * from './domain/types';
@@ -39,7 +43,6 @@ function reducer(state: RayoStore, action: Action): RayoStore {
 interface StoreCtx {
   store: RayoStore;
   setStore: (s: RayoStore) => void;
-  reset: () => void;
   persistError: boolean;
   clearPersistError: () => void;
 }
@@ -47,18 +50,42 @@ interface StoreCtx {
 const Ctx = createContext<StoreCtx | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [store, dispatch] = useReducer(reducer, undefined, load);
+  const { gymId } = useAuthContext();
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: ['gym', gymId],
+    queryFn: () => syncLoad(gymId!),
+    enabled: !!gymId,
+    staleTime: 30_000,
+  });
+
+  const [store, dispatch] = useReducer(reducer, undefined, seed);
   const [persistError, setPersistError] = useState(false);
 
-  const setStore = useCallback((s: RayoStore) => {
-    if (!save(s)) setPersistError(true);
-    dispatch({ type: 'SET', store: s });
-  }, []);
+  const storeRef = useRef(store);
+  storeRef.current = store;
+
+  useEffect(() => {
+    if (query.data) dispatch({ type: 'SET', store: query.data });
+  }, [query.data]);
+
+  const setStore = useCallback(
+    (s: RayoStore) => {
+      dispatch({ type: 'SET', store: s });
+      if (!gymId) return;
+      const prev = storeRef.current;
+      syncSave(prev, s, gymId)
+        .then(() => queryClient.invalidateQueries({ queryKey: ['gym', gymId] }))
+        .catch(() => setPersistError(true));
+    },
+    [gymId, queryClient]
+  );
 
   const clearPersistError = useCallback(() => setPersistError(false), []);
 
   const value = useMemo(
-    () => ({ store, setStore, reset: () => setStore(seed()), persistError, clearPersistError }),
+    () => ({ store, setStore, persistError, clearPersistError }),
     [store, setStore, persistError, clearPersistError]
   );
 
